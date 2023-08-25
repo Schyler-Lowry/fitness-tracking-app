@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
+    <title>{% block title %}Fitness{% endblock title %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar navbar-expand-lg my-2 bg-secondary rounded sticky-top">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'home' %}"><img class="img-thumbnail" style="height: 45px;" src="https://i.imgur.com/m91WSGf.png" alt=""></a>
+          
+          {% if user.is_authenticated %}
+          <div class="d-grid gap-2 col mx-auto ">
+            
+            <button class="navbar-toggler bg-light" bg-info"" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                Menu <span class="navbar-toggler-icon"></span>
+              </button>
+              
+              <div class="collapse navbar-collapse show " id="navbarTogglerDemo01"> <!-- remember to remove the 'show' mixin -->
+                <div class="d-grid gap-2 d-lg-flex col mx-auto ">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Record Weight
+                </button>
+                <a class="btn btn-light" href="{% url 'home' %}">View All</a>
+                
+                
+                  <div class="dropdown">
+                      <div class="d-grid gap-2 d-lg-flex col mx-auto ">
+                      <a class="btn btn btn-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }} <i class="bi bi-caret-down-square mb-1"></i>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'user_profile' request.user.pk %}">View Profile</a> </li>
+                        <li><a class="dropdown-item" href="{% url 'user_change_profile' user.pk %}">Edit Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a> </li>
+                        {% if user.is_staff %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
+                        {% endif %}
+                      </ul>
+                    </div>
+                  </div>
+                
+                </div>
+                
+              </div>
+            
+          </div>
+          {% endif %}
+            
+          
+        </div>
+        
+      </nav>
+      
+    {% block content %}
+    {% endblock content %}
+
+    
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Record Weight</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="" method="post">
+          {% csrf_token %}
+        <div class="modal-body">
+          
+            <div class="form-floating mb-3">
+                <input type="decimal" class="form-control" name="weight" id="floatingInput" maxlength="5" placeholder="Enter your weight">
+                <label for="floatingInput">Weight</label>
+              </div>
+              <div class="form-floating">
+                <input type="datetime-local" class="form-control" name="recorded" id="floatingDatetime" placeholder="Enter the date and time">
+                <label for="floatingDatetime">Date & Time</label>
+              </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">POST</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

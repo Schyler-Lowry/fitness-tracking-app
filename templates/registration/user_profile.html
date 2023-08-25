@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load profile_pic %}
+{% block title %}
+    User Profile
+{% endblock title %}
+
+{% block content %}
+ 
+<div class="card mb-2" >
+    <div class="card-body">
+        <div class="row gap-2 d-lg-flex">
+            <div class="col-sm-2">
+                <img src="{% get_avatar_url email=object.email size=150 %}" class="user-image" alt="..." > <!-- style="max-width: 100px; max-height: 100px;"-->
+            </div>
+            <div class="col-sm-9">
+                <p>{{ object.username }}</p>
+                <p>{{ object.first_name}}</p>
+                <p>{{ object.last_name}}</p>
+                <p>{{ object.email}}</p>
+            </div>
+        </div>        
+    </div>
+</div>
+
+{% endblock content %}
+

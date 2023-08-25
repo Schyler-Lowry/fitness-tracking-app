@@ -1,0 +1,30 @@
+<!-- 
+Schyler Lowry
+CIS218
+8/3/2023 
+-->
+
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+Edit Profile
+{% endblock title %}
+
+
+
+{% block content %}
+    <h1>Change Your Profile Info</h1>
+    <div class="container">        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.username|as_crispy_field }}
+            {{ form.email|as_crispy_field }}
+            {{ form.date_of_birth|as_crispy_field }}
+            {{ form.first_name|as_crispy_field }}
+            {{ form.last_name|as_crispy_field }}
+            {{ form.avatar|as_crispy_field }}
+            <input class="btn btn-success" type="submit" value="Save">
+            <a href="{% url 'user_profile' user.pk %}" id="cancel" name="cancel" class="btn btn-danger ml-2">Cancel</a>
+        </form>        
+    </div>
+{% endblock content %}
