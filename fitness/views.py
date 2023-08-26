@@ -24,7 +24,7 @@ class WeightEntryListView(ListView):
     model = WeightEntry
     template_name = "home.html"
     paginate_by = 10
-    queryset = WeightEntry.objects.all().order_by("-created", "-recorded", "-updated")
+    queryset = WeightEntry.objects.all().order_by("-recorded", "-updated","-created")
     
 
     def post(self, request, *args, **kwargs):

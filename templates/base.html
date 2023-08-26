@@ -71,7 +71,7 @@
         </div>
         
       </nav>
-      
+      <div id="liveAlertPlaceholderTemplate"></div>
     {% block content %}
     {% endblock content %}
     <!-- jQuery CDN -->
@@ -82,8 +82,9 @@
 // update: it now shows the modal. still need to prevent a form submission if invalid.
 $(document).ready(function() {
     
-    var invalid = document.getElementById("error_1_id_weight");
+    var invalid = document.getElementById("error_1_id_weight"); 
     var showModal = document.getElementById("showModal");
+    const alertPlaceholderTemplate = document.getElementById('liveAlertPlaceholderTemplate')
     const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
     if (invalid !=null) {
         const wrapper = document.createElement('div')
@@ -94,6 +95,7 @@ $(document).ready(function() {
                 '</div>'
             ].join('')
             alertPlaceholder.append(wrapper)
+            alertPlaceholderTemplate.append(wrapper)
         
         showModal.click();
     } 
@@ -167,6 +169,7 @@ $(document).ready(function() {
           <h1 class="modal-title fs-5" id="staticBackdropLabel">Record Weight</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        {{ form.media }}
         <form id="myForm" action="" method="post">
           {% csrf_token %}
         <div class="modal-body" id="modalBody">
@@ -177,8 +180,8 @@ $(document).ready(function() {
             </div>
         
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" id="postButton" class="btn btn-primary">POST</button>
+          <button type="button" class="btn btn-secondary border border-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" id="postButton" class="btn btn-success border border-dark"><i class="bi bi-journal-plus"></i> Save</button>
         </div>
       </form>
       </div>

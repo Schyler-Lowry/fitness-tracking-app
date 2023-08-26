@@ -1,50 +1,37 @@
 from django import forms
 from .models import WeightEntry
 from datetime import datetime
+from bootstrap_datepicker_plus.widgets import DateTimePickerInput, TimePickerInput
 
-class MyDateInput(forms.DateTimeInput):
-    input_type ='date'
 
-# class YourForm(forms.ModelForm):
-#     publishDate = forms.DateField(widget=MyDateInput(attrs={'class':'form-control'}))
-#     class Meta:
-#         model = YourModel
-#         fields = ('publishDate')
 
 
 
 class WeightEntryForm(forms.ModelForm):
     """add weight entry form"""
-    #recorded = forms.DateField(widget=MyDateInput(attrs={'class':'form-control'}))
     
     class Meta:
         model = WeightEntry
         fields = ("weight", "recorded", "note")
         widgets = {
-            'recorded': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'recorded': DateTimePickerInput(),
             'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""})
         }
 
 
-        # def get_now():
-        #     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-
-
-        # widgets = {
-        #     'recorded': forms.DateTimeField(attrs={'placeholder': 'Write your reply, in 140 characters or less.'})
-        # }
+        #options={"format": "HH:mm MM/DD/YYYY"}
+        #options={"format": "MM/DD/YYYY %I:%M %p"}
 
 
 class WeightEntryEditForm(forms.ModelForm):
     """edit weigh entry form"""
-    #recorded = forms.DateField(widget=MyDateInput(attrs={'class':'form-control'}))
+    
     
     class Meta:
         model = WeightEntry
         fields = ("weight", "recorded", "note")
         widgets = {
-            'recorded': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'recorded': DateTimePickerInput(),
             'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""}),
             'note': forms.TextInput(attrs={'type': 'text'}),
         }

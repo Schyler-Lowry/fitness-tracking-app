@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'crispy_forms',
     'crispy_bootstrap5',
+    'bootstrap_datepicker_plus',
     # Local First Party
     'fitness.apps.FitnessConfig',
     'accounts.apps.AccountsConfig',
@@ -166,3 +167,16 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
 }
+
+BOOTSTRAP_DATEPICKER_PLUS = {
+    "options": {
+        "locale": "us",
+    },
+    "variant_options": {
+        "datetime": {
+            "format": "MM/YY/DD h:mm A",
+            "showTodayButton": True,
+        },
+    }
+}
+
