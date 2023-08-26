@@ -15,7 +15,7 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView, FormMi
 from django.urls import reverse_lazy, reverse
 
 from .models import WeightEntry
-from .forms import WeightEntryForm
+from .forms import WeightEntryForm, WeightEntryEditForm
 
 class TemplateView(LoginRequiredMixin, TemplateView):
     template_name="home.html"
@@ -23,7 +23,8 @@ class TemplateView(LoginRequiredMixin, TemplateView):
 class WeightEntryListView(ListView):
     model = WeightEntry
     template_name = "home.html"
-    
+    paginate_by = 10
+    queryset = WeightEntry.objects.all().order_by("-created", "-recorded", "-updated")
     
 
     def post(self, request, *args, **kwargs):
@@ -40,11 +41,12 @@ class WeightEntryListView(ListView):
         context["weight_entry_list"] = weight_entry_list
         return context
 
-class WeightEntryCreateView(FormView):
+class WeightEntryDetailView(DetailView):
     model = WeightEntry
+    template_name = "weight_entry_detail.html"
     
 class WeightEntryPostView(FormView):
-    """comment post view"""
+    """weight entry post view"""
     model = WeightEntry
     form_class = WeightEntryForm
     template_name = "home.html"
@@ -58,11 +60,11 @@ class WeightEntryPostView(FormView):
         
         return super().form_valid(form)
     
-    def get_context_data(self, **kwargs):
-        context = super(WeightEntryPostView, self).get_context_data(**kwargs)
-        weight_entry_list = WeightEntry.objects.all()
-        context["weight_entry_list"] = weight_entry_list
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(WeightEntryPostView, self).get_context_data(**kwargs)
+    #     weight_entry_list = WeightEntry.objects.all()
+    #     context["weight_entry_list"] = weight_entry_list
+    #     return context
 
     def get_success_url(self):
         """get the success url"""
@@ -73,12 +75,27 @@ class WeightEntryUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     """weight entry update view"""
     model = WeightEntry
     template_name = "weight_entry_update.html"
-    fields = ["weight", "recorded"]
+    form_class = WeightEntryEditForm
 
     def get_success_url(self):
         """get the success url"""
         messages.info(self.request, 'Weight entry updated')
         return reverse("home")
+    
+    def test_func(self):
+        obj = self.get_object()
+        return obj.user == self.request.user
+        
+class WeightEntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """weight entry update view"""
+    model = WeightEntry
+    template_name = "weight_entry_delete.html"
+    
+
+    def get_success_url(self):
+        """get the success url"""
+        messages.danger(self.request, 'Weight entry delete')
+        return reverse_lazy("home")
     
     def test_func(self):
         obj = self.get_object()

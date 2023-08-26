@@ -1,50 +1,130 @@
 {% extends 'base.html' %}
 {% load range_filter %}
 
+{% block navtabs %}
+{% if is_paginated %}
+    <ul class="pagination ">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+            <li class="page-item active" style="--bs-pagination-active-bg: rgb(179, 179, 179); --bs-pagination-active-border-color: rgb(179, 179, 179);"><span class="page-link text-black">{{ i }}</span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link text-black" aria-current="page" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&raquo;</span></li>
+        {% endif %}
+    </ul>
+{% endif %}
+{% endblock navtabs %}
+
+{% block navtabs1 %}
+{% if is_paginated %}
+    <ul class="pagination ">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+            <li class="page-item active" style="--bs-pagination-active-bg: rgb(179, 179, 179); --bs-pagination-active-border-color: rgb(179, 179, 179);"><span class="page-link text-black">{{ i }}</span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link text-black" aria-current="page" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&raquo;</span></li>
+        {% endif %}
+    </ul>
+{% endif %}
+{% endblock navtabs1 %}
+
+
 {% block content %}
-
-<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-<script>
-// this is technically working. The logic is here. Now need to add better error message, or to immediately show modal.
-// update: it now shows the modal. still need to prevent a form submission if invalid.
-$(document).ready(function() {
-    
-    var invalid = document.getElementById("error_1_id_weight");
-    var showModal = document.getElementById("showModal");
-    const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-    if (invalid !=null) {
-        const wrapper = document.createElement('div')
-            wrapper.innerHTML = [
-                `<div class="alert alert-danger alert-dismissible" role="alert">`,
-                `   <div>Something went wrong, please try to record your weight entry again, or reload the page.</div>`,
-                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-                '</div>'
-            ].join('')
-            alertPlaceholder.append(wrapper)
-        
-        showModal.click();
-    } 
-});
-</script>
-    
-<!-- <p id="weight_p">weight: {{weight}}</p>
-<p>recorded: {{recorded}}</p> -->
-
 {% include "partials/_messages.html" %}
 
-
-{% for entry in weight_entry_list|dictsortreversed:"created" %}
+<div class="row justify-content-md-start">
+{% for entry in weightentry_list %}
+<div class="col-sm-6 pb-2 mb-2">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">{{entry.weight}}lbs </h5>
+            <h5 class="card-title">{{entry.weight}} lbs </h5> 
             <p>{{entry.recorded}}</p>
-            <p>by <span class="fw-bold">{{entry.user}}</span></p>
+    
+            <p>
+                {% if entry.note|length >= 1  %}
+                    {{entry.note|slice:"30"}}
+                    {% if entry.note|length > 30 %}
+                        ... <a href="{% url "weight_entry_detail" entry.pk %}">view full note</a>.
+                    {% endif %}
+                {% else %}
+                <br>
+                {% endif %}
+            </p>
             
+            <p><small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <span class="fw-bold">{{entry.user}}</span>{% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small></p>
+            <a href="{% url "weight_entry_detail" entry.pk %}" class="btn btn-primary border border-secondary">Details</a>
             {% if request.user == entry.user %}
-            <a href="{% url "weight_entry_update" entry.pk %}" class="btn btn-primary">Edit Entry</a>
+            <a href="{% url "weight_entry_update" entry.pk %}" class="btn btn-warning border border-secondary">Edit Entry</a>
+            <a href="{% url "weight_entry_delete" entry.pk %}" class="btn btn-danger border border-secondary">Delete Entry</a>
             {% endif %}
                 
         </div>
     </div> 
+</div>
 {% endfor %}  
+</div>
+{% if is_paginated %}
+<nav aria-label="Page navigation example" class="justify-content-center mb-4 ms-5">
+
+<div class="card border-0">
+    <div class="card-body ">
+        <div class="row gap-1 ">
+            <div class="col bg-info offset-4">
+                
+            </div>
+            <div class="col">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+                    {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col bg-info offset-5 ">
+                
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+
+        
+</nav>
+{% endif %}
+
 {% endblock content %}

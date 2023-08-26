@@ -14,15 +14,15 @@ class MyDateInput(forms.DateTimeInput):
 
 
 class WeightEntryForm(forms.ModelForm):
-    """comment form"""
+    """add weight entry form"""
     #recorded = forms.DateField(widget=MyDateInput(attrs={'class':'form-control'}))
     
     class Meta:
         model = WeightEntry
-        fields = ("weight", "recorded")
+        fields = ("weight", "recorded", "note")
         widgets = {
             'recorded': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""}) 
+            'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""})
         }
 
 
@@ -35,3 +35,16 @@ class WeightEntryForm(forms.ModelForm):
         #     'recorded': forms.DateTimeField(attrs={'placeholder': 'Write your reply, in 140 characters or less.'})
         # }
 
+
+class WeightEntryEditForm(forms.ModelForm):
+    """edit weigh entry form"""
+    #recorded = forms.DateField(widget=MyDateInput(attrs={'class':'form-control'}))
+    
+    class Meta:
+        model = WeightEntry
+        fields = ("weight", "recorded", "note")
+        widgets = {
+            'recorded': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""}),
+            'note': forms.TextInput(attrs={'type': 'text'}),
+        }

@@ -78,13 +78,33 @@
         <div class="modal-body" id="modalBody">
           
             <div class="form-floating mb-3">
-                <input type="decimal" class="form-control" name="weight" id="floatingInput" maxlength="5" placeholder="Enter your weight">
-                <label for="floatingInput">Weight</label>
+                <input type="text" class="textinput form-control" name="weight" id="floatingInput" maxlength="5" placeholder="Enter your weight">
+                <label for="floatingInput">test labl</label>
               </div>
               <div class="form-floating">
                 <input type="datetime-local" class="form-control" name="recorded" id="floatingDatetime" placeholder="Enter the date and time">
                 <label for="floatingDatetime">Date & Time</label>
               </div>
+              
+
+              <!-- <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Link with href
+              </a> -->
+              
+              <div id="div_id_note" class="my-3"> 
+                <a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <label for="id_note" class="form-label"><button class="btn btn-outline-secondary btn-sm">Note <i class="bi bi-caret-down-square mb-1"></i></button></label></a>
+                  <span class="form-text"> Optional: Add a note regarding this entry.</span>
+                <div class="collapse" id="collapseExample">
+                  <textarea name="note" cols="40" rows="5" class="textarea form-control" id="id_note"></textarea> 
+                </div>
+                    <div id="hint_id_note" class="form-text">
+                        
+                    </div> 
+              </div>
+              
+              
+              
           
         </div>
         <div class="modal-footer">

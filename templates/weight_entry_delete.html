@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+Delete Weight Entry
+{% endblock title %}
+
+
+
+{% block content %}
+    <h4>Delete Weight {{weightentry}} ?</h4>
+    <div class="container">
+        <div class="row justify-content-md-start">
+
+            <div class="col-sm-3 pb-2 mb-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{weightentry.weight}}lbs </h5>
+                        <p>{{weightentry.recorded}}</p>
+                        <p>by <span class="fw-bold">{{weightentry.user}}</span></p>
+                        
+                        {% if request.user == weightentry.user %}
+                        <a href="{% url "weight_entry_update" weightentry.pk %}" class="btn btn-primary">Edit Entry</a>
+                        {% endif %}
+                            
+                    </div>
+                    <div class="card-footer">
+                        <p>{{weightentry.note}}</p>
+                    </div>
+                </div> 
+            </div>
+        
+        </div>   
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input class="btn btn-danger" type="submit" value="Delete">
+            <a href="{% url 'home' %}" id="cancel" name="cancel" class="btn btn-success">Cancel</a>
+        </form>        
+    </div>
+{% endblock content %}

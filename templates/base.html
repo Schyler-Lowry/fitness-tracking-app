@@ -26,20 +26,21 @@
               <div class="collapse navbar-collapse show " id="navbarTogglerDemo01"> <!-- remember to remove the 'show' mixin -->
                 <div class="d-grid gap-2 d-lg-flex col mx-auto ms-2">
                   <!-- show modal -->
-                  <button type="button" id="showModal" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#weightModalAdd">
-                    Record Weight
+                  <button type="button" id="showModal" class="btn btn-success border border-dark " data-bs-toggle="modal" data-bs-target="#weightModalAdd">
+                    <i class="bi bi-plus-circle"></i> Record Weight <i class="bi bi-pencil-square"></i>
                 </button>
-                <a class="btn btn-light" href="{% url 'home' %}">View All</a>
+                <!-- <a class="btn btn-light border border-dark" href="{% url 'home' %}">View All</a> -->
                 
                 
                   <div class="dropdown">
                       <div class="d-grid gap-2 d-lg-flex col mx-auto ">
-                      <a class="btn btn btn-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <a class="btn btn btn-light border border-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{ user.username }} <i class="bi bi-caret-down-square mb-1"></i>
                       </a>
+                      <!-- <button class="btn btn-primary" type="submit">Button</button> -->
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'user_profile' request.user.pk %}">View Profile</a> </li>
-                        <li><a class="dropdown-item" href="{% url 'user_change_profile' user.pk %}">Edit Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_profile' request.user.pk %}">View Your Profile</a> </li>
+                        <li><a class="dropdown-item" href="{% url 'user_change_profile' user.pk %}">Edit Your Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a> </li>
                         {% if user.is_staff %}
                         <li><hr class="dropdown-divider"></li>
@@ -48,12 +49,22 @@
                       </ul>
                     </div>
                   </div>
-                
+                  
+                </div>
+                <div class="d-grid gap-2 d-lg-flex justify-content-center mt-2">
+                  {% block navtabs %}
+                  {% endblock navtabs %}
                 </div>
                 
               </div>
             
           </div>
+          {% else %}
+          <div>
+            <a href="{% url "login" %}" class="btn btn-primary border border-dark">Login</a>
+          </div>
+          {% block navtabs1 %}
+                  {% endblock navtabs1 %}
           {% endif %}
             
           
@@ -66,6 +77,28 @@
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
     
+<script>
+// this is technically working. The logic is here. Now need to add better error message, or to immediately show modal.
+// update: it now shows the modal. still need to prevent a form submission if invalid.
+$(document).ready(function() {
+    
+    var invalid = document.getElementById("error_1_id_weight");
+    var showModal = document.getElementById("showModal");
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+    if (invalid !=null) {
+        const wrapper = document.createElement('div')
+            wrapper.innerHTML = [
+                `<div class="alert alert-danger alert-dismissible" role="alert">`,
+                `   <div>Something went wrong, please try to record your weight entry again, or reload the page.</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('')
+            alertPlaceholder.append(wrapper)
+        
+        showModal.click();
+    } 
+});
+</script>
 
     <script>
       // source: https://stackoverflow.com/a/13952727/22203195
@@ -77,7 +110,50 @@
       }
     </script>
     
+  <script>
+
+
+          
+ $(document).ready(function() {
   
+  const wrapper = document.createElement('label')
+              wrapper.setAttribute("for", "id_weight")
+              wrapper.setAttribute("id", "weightInputID")
+          
+  
+
+  let modalBody = $("#modalBody");
+  
+  let weightDiv = modalBody.find("#div_id_weight");
+  let weightLabel = weightDiv.find(".form-label");
+  let weightInput = weightDiv.find("#id_weight");
+  
+  weightInput.attr("placeholder", "weight")
+  weightDiv.removeClass("mb-3");
+  weightDiv.addClass("form-floating mb-3");
+  weightLabel.remove();
+  weightDiv.append(wrapper)
+  let wrapperText = $("#weightInputID")
+  wrapperText.text("Weight");
+
+
+
+  let noteDiv = modalBody.find("#div_id_note");
+  let noteTextarea = noteDiv.find("#id_note");
+  // $("#div_id_note").html("<h1>TESTSET</h1>")
+  $("#div_id_note").replaceWith('<div id="div_id_note" class="my-3">\
+    <a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\
+      <label for="id_note" class="form-label"><button class="btn btn-outline-secondary btn-sm">Note <i class="bi bi-caret-down-square mb-1"></i></button></label></a>\
+      <span class="form-text"> Optional: Add a note regarding this entry.</span>\
+    <div class="collapse" id="collapseExample">\
+      <textarea name="note" cols="40" rows="5" class="textarea form-control" id="id_note" placeholder="Example: &quot;I was dehydrated when I measured myself&quot; or &quot;I just had something to eat before I measured myself&quot;">{{weightentry.note}}</textarea>\
+    </div>\
+        <div id="hint_id_note" class="form-text"></div>');
+
+ 
+  
+});
+  </script>
   <!-- Modal -->
 {#  <div class="modal fade" id="weightModalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> #}
   <div class="modal fade" id="weightModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -93,11 +169,13 @@
         </div>
         <form id="myForm" action="" method="post">
           {% csrf_token %}
-        <div class="modal-body">
+        <div class="modal-body" id="modalBody">
           
             {{ form|crispy }}
-          
-        </div>
+            
+
+            </div>
+        
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="submit" id="postButton" class="btn btn-primary">POST</button>
