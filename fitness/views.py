@@ -116,7 +116,7 @@ class WeightEntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
     def get_success_url(self):
         """get the success url"""
-        messages.danger(self.request, 'Weight entry deleted')
+        messages.error(self.request, 'Weight entry deleted')
         return reverse_lazy("home")
     
     def test_func(self):
