@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+Edit Weight Entry
+{% endblock title %}
+
+
+
+{% block content %}
+    <h4>Modifying Weight {{weightentry}}</h4>
+    <div class="container">        
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input class="btn btn-success" type="submit" value="Save">
+            <a href="{% url 'home' %}" id="cancel" name="cancel" class="btn btn-danger ml-2">Cancel</a>
+        </form>        
+    </div>
+{% endblock content %}

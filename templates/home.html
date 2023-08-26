@@ -8,22 +8,30 @@
 // this is technically working. The logic is here. Now need to add better error message, or to immediately show modal.
 // update: it now shows the modal. still need to prevent a form submission if invalid.
 $(document).ready(function() {
-    var error = document.getElementById("errorField");
+    
     var invalid = document.getElementById("error_1_id_weight");
     var showModal = document.getElementById("showModal");
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
     if (invalid !=null) {
+        const wrapper = document.createElement('div')
+            wrapper.innerHTML = [
+                `<div class="alert alert-danger alert-dismissible" role="alert">`,
+                `   <div>Something went wrong, please try to record your weight entry again, or reload the page.</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('')
+            alertPlaceholder.append(wrapper)
         
-        error.textContent = "Something went wrong, please try to record your weight entry again, or reload the page."
         showModal.click();
-    } else {
-        error.textContent = ""
-    }
+    } 
 });
 </script>
     
-<p id="weight_p">weight: {{weight}}</p>
-<p>recorded: {{recorded}}</p>
-<p id="errorField"></p>
+<!-- <p id="weight_p">weight: {{weight}}</p>
+<p>recorded: {{recorded}}</p> -->
+
+{% include "partials/_messages.html" %}
+
 
 {% for entry in weight_entry_list|dictsortreversed:"created" %}
     <div class="card">
@@ -31,7 +39,11 @@ $(document).ready(function() {
             <h5 class="card-title">{{entry.weight}}lbs </h5>
             <p>{{entry.recorded}}</p>
             <p>by <span class="fw-bold">{{entry.user}}</span></p>
-            <a href="#" class="btn btn-primary">Button</a>
+            
+            {% if request.user == entry.user %}
+            <a href="{% url "weight_entry_update" entry.pk %}" class="btn btn-primary">Edit Entry</a>
+            {% endif %}
+                
         </div>
     </div> 
 {% endfor %}  

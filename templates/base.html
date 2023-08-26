@@ -14,19 +14,19 @@
 <div class="container">
     <nav class="navbar navbar-expand-lg my-2 bg-secondary rounded sticky-top">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}"><img class="img-thumbnail" style="height: 45px;" src="https://i.imgur.com/m91WSGf.png" alt=""></a>
+          <a class="navbar-brand bg-primary opacity-75 m-1 p-1 rounded" href="{% url 'home' %}"><img class="img-thumbnail" style="height: 45px;" src="https://i.imgur.com/m91WSGf.png" alt=""></a>
           
           {% if user.is_authenticated %}
           <div class="d-grid gap-2 col mx-auto ">
             
-            <button class="navbar-toggler bg-light" bg-info"" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler bg-light ms-2" bg-info"" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
                 Menu <span class="navbar-toggler-icon"></span>
               </button>
               
               <div class="collapse navbar-collapse show " id="navbarTogglerDemo01"> <!-- remember to remove the 'show' mixin -->
-                <div class="d-grid gap-2 d-lg-flex col mx-auto ">
+                <div class="d-grid gap-2 d-lg-flex col mx-auto ms-2">
                   <!-- show modal -->
-                  <button type="button" id="showModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                  <button type="button" id="showModal" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#weightModalAdd">
                     Record Weight
                 </button>
                 <a class="btn btn-light" href="{% url 'home' %}">View All</a>
@@ -79,10 +79,15 @@
     
   
   <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+{#  <div class="modal fade" id="weightModalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> #}
+  <div class="modal fade" id="weightModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div id="liveAlertPlaceholder"></div>
     <div class="modal-dialog">
+      
       <div class="modal-content">
+        
         <div class="modal-header">
+          
           <h1 class="modal-title fs-5" id="staticBackdropLabel">Record Weight</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
