@@ -139,4 +139,5 @@ cython_debug/
 
 # development backup files
 .backup-dev-files
+scratchpad.html
 
