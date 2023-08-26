@@ -42,3 +42,9 @@ class UserProfileChangeView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     def test_func(self):
         obj = self.get_object()
         return obj.pk == self.request.user.pk
+    
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileChangeView, self).get_context_data(**kwargs)
+        context["form1"] = WeightEntryForm(initial={'recorded': datetime.now()})
+        
+        return context

@@ -1,5 +1,6 @@
 from typing import Optional
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.safestring import mark_safe
 
 from datetime import datetime
 
@@ -45,6 +46,18 @@ class WeightEntryDetailView(DetailView):
     model = WeightEntry
     template_name = "weight_entry_detail.html"
     
+    def post(self, request, *args, **kwargs):
+        """doing POST request"""
+        view = WeightEntryPostView.as_view()
+        return view(request, *args, **kwargs)
+    
+   
+    
+    def get_context_data(self, **kwargs):
+        context = super(WeightEntryDetailView, self).get_context_data(**kwargs)
+        context["form"] = WeightEntryForm(initial={'recorded': datetime.now()})
+        return context
+
 class WeightEntryPostView(FormView):
     """weight entry post view"""
     model = WeightEntry
@@ -79,7 +92,16 @@ class WeightEntryUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
     def get_success_url(self):
         """get the success url"""
-        messages.info(self.request, 'Weight entry updated')
+        obj = self.get_object()
+        
+
+        n = '<a href='
+        n1 = "/{}".format(obj.pk)
+        n2 = '>Weight entry</a> updated'
+        n_full = n + n1 + n2
+        
+        print("ALERT ALERT:", n_full)
+        messages.info(self.request, mark_safe(n_full))
         return reverse("home")
     
     def test_func(self):
@@ -94,12 +116,17 @@ class WeightEntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
     def get_success_url(self):
         """get the success url"""
-        messages.danger(self.request, 'Weight entry delete')
+        messages.danger(self.request, 'Weight entry deleted')
         return reverse_lazy("home")
     
     def test_func(self):
         obj = self.get_object()
         return obj.user == self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super(WeightEntryDeleteView, self).get_context_data(**kwargs)
+        context["form2"] = WeightEntryForm(initial={'recorded': datetime.now()})
+        return context
         
 
 

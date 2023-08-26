@@ -59,7 +59,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">{{entry.weight}} lbs </h5> 
-            <p>{{entry.recorded}}</p>
+            <p>Recorded On: {{entry.recorded}}</p>
     
             <p>
                 {% if entry.note|length >= 1  %}
@@ -72,7 +72,12 @@
                 {% endif %}
             </p>
             
-            <p><small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <span class="fw-bold">{{entry.user}}</span>{% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small></p>
+            <p class="lh-1">
+                <small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <span class="fw-bold">{{entry.user}}</span>{% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small>
+                <br>
+                <small><small>Added to Log On: {{entry.created}}</small></small>
+            </p>
+            
             <a href="{% url "weight_entry_detail" entry.pk %}" class="btn btn-primary border border-secondary">Details</a>
             {% if request.user == entry.user %}
             <a href="{% url "weight_entry_update" entry.pk %}" class="btn btn-warning border border-secondary">Edit Entry</a>
@@ -90,7 +95,7 @@
 <div class="card border-0">
     <div class="card-body ">
         <div class="row gap-1 ">
-            <div class="col bg-info offset-4">
+            <div class="col offset-4">
                 
             </div>
             <div class="col">
@@ -114,7 +119,7 @@
                     {% endif %}
                 </ul>
             </div>
-            <div class="col bg-info offset-5 ">
+            <div class="col offset-5 ">
                 
             </div>
         </div>

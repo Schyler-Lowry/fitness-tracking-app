@@ -29,7 +29,8 @@ Delete Weight Entry
                 </div> 
             </div>
         
-        </div>   
+        </div>
+        {{ form2.media }} 
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}

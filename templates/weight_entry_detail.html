@@ -12,7 +12,11 @@
                 <h5 class="card-title">{{weightentry.weight}}lbs </h5>
                 <p>{{weightentry.recorded}}</p>
                 <p>by <span class="fw-bold">{{weightentry.user}}</span></p>
-                <p> {% if entry.updated|date:"m/d/y H:i:s" != weightentry.created|date:"m/d/y H:i:s" %} Last Updated: {{weightentry.updated}} {% endif %}</p>
+                <p> Last Updated: {{weightentry.updated}} 
+                    <br>
+                    <small><small>Added to Log On: {{weightentry.created}}</small></small>
+                </p>
+                
                 
                 {% if request.user == weightentry.user %}
                 <a href="{% url "weight_entry_update" weightentry.pk %}" class="btn btn-primary">Edit Entry</a>
@@ -28,3 +32,4 @@
 
 </div>
 {% endblock content %}
+

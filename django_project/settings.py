@@ -174,7 +174,7 @@ BOOTSTRAP_DATEPICKER_PLUS = {
     },
     "variant_options": {
         "datetime": {
-            "format": "MM/YY/DD h:mm A",
+            "format": "MM/DD/YY h:mm A",
             "showTodayButton": True,
         },
     }

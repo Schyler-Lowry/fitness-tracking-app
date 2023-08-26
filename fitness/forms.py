@@ -15,7 +15,8 @@ class WeightEntryForm(forms.ModelForm):
         fields = ("weight", "recorded", "note")
         widgets = {
             'recorded': DateTimePickerInput(),
-            'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""})
+            'weight': forms.TextInput(attrs={'maxlength': "5", "onkeypress": "return isNumberKey(event)", "required":""}),
+            'note': forms.TextInput(attrs={'type': 'text'}),
         }
 
 

@@ -14,8 +14,10 @@ Edit Profile
 
 {% block content %}
     <h1>Change Your Profile Info</h1>
-    <div class="container">        
+    <div class="container">       
+        {{ form1.media }} 
         <form method="post">
+            
             {% csrf_token %}
             {{ form.username|as_crispy_field }}
             {{ form.email|as_crispy_field }}
