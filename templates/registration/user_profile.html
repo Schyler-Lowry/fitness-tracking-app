@@ -4,8 +4,12 @@
     User Profile
 {% endblock title %}
 
+
+
+
+
 {% block content %}
- 
+{% include "partials/_messages.html" %}
 <div class="card mb-2" >
     <div class="card-body">
         <div class="row gap-2 d-lg-flex">
@@ -17,10 +21,18 @@
                 <p>{{ object.first_name}}</p>
                 <p>{{ object.last_name}}</p>
                 <p>{{ object.email}}</p>
+                <p>
+                    <a class="btn btn-primary border border-dark" href="{% url "user_entry_list" customuser.pk %}">
+                        View All <span class="fw-medium">{{ object.username }}</span>'s Entries <span class="badge rounded-pill bg-info border border-dark ">{{postlist.count}}</span> 
+                    </a>
+                </p>
             </div>
+            
         </div>        
     </div>
 </div>
+
+
 
 {% endblock content %}
 

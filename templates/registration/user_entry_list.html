@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load profile_pic %}
+{% block title %}
+    User Profile
+{% endblock title %}
+
+
+{% block navtabs %}
+{% if is_paginated %}
+    <ul class="pagination ">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+            <li class="page-item active" style="--bs-pagination-active-bg: rgb(179, 179, 179); --bs-pagination-active-border-color: rgb(179, 179, 179);"><span class="page-link text-black">{{ i }}</span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link text-black" aria-current="page" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&raquo;</span></li>
+        {% endif %}
+    </ul>
+{% endif %}
+{% endblock navtabs %}
+
+{% block navtabs1 %}
+{% if is_paginated %}
+    <ul class="pagination ">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+            <li class="page-item active" style="--bs-pagination-active-bg: rgb(179, 179, 179); --bs-pagination-active-border-color: rgb(179, 179, 179);"><span class="page-link text-black">{{ i }}</span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link text-black" aria-current="page" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link text-black" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link text-black">&raquo;</span></li>
+        {% endif %}
+    </ul>
+{% endif %}
+{% endblock navtabs1 %}
+
+
+{% block content %}
+{% include "partials/_messages.html" %}
+<div class="card mb-2" >
+    <div class="card-body">
+        <div class="row gap-2 d-lg-flex">
+            <div class="col-sm-2">
+                <img src="{% get_avatar_url email=customuser.email size=150 %}" class="user-image" alt="..." > <!-- style="max-width: 100px; max-height: 100px;"-->
+            </div>
+            <div class="col-sm-9">
+                <p>{{ customuser.username }}</p>
+                <p>{{ customuser.first_name}}</p>
+                <p>{{ customuser.last_name}}</p>
+                <p>{{ customuser.email}}</p>
+                
+            </div>
+            
+        </div>        
+    </div>
+</div>
+
+<div class="row justify-content-md-start">
+    {% for entry in weightentry_list %}
+    <div class="col-sm-6 pb-2 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{entry.weight}} lbs </h5> 
+                <p>Recorded On: {{entry.recorded}}</p>
+        
+                <p>
+                    {% if entry.note|length >= 1  %}
+                        {{entry.note|slice:"30"}}
+                        {% if entry.note|length > 30 %}
+                            ... <a href="{% url "weight_entry_detail" entry.pk %}">view full note</a>.
+                        {% endif %}
+                    {% else %}
+                    <br>
+                    {% endif %}
+                </p>
+                
+                <p class="lh-1">
+                    <small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <a class="fw-bold text-black" href="{% url "user_profile" entry.user.pk %}">{{entry.user}}</a> {% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small>
+                    <br>
+                    <small><small>Added to Log On: {{entry.created}}</small></small>
+                </p>
+                
+                <a href="{% url "weight_entry_detail" entry.pk %}" class="btn btn-primary border border-secondary">Details</a>
+                {% if request.user == entry.user %}
+                <a href="{% url "weight_entry_update" entry.pk %}" class="btn btn-warning border border-secondary">Edit Entry</a>
+                <a href="{% url "weight_entry_delete" entry.pk %}" class="btn btn-danger border border-secondary">Delete Entry</a>
+                {% endif %}
+                    
+            </div>
+        </div> 
+    </div>
+    {% endfor %}  
+    </div>
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example" class="justify-content-center mb-4 ms-5">
+    
+    <div class="card border-0">
+        <div class="card-body ">
+            <div class="row gap-1 ">
+                <div class="col offset-4">
+                    
+                </div>
+                <div class="col">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        {% endif %}
+                        {% for i in paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col offset-5 ">
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+            
+    </nav>
+    {% endif %}
+{% endblock content %}
+

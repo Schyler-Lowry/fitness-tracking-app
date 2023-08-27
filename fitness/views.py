@@ -25,7 +25,14 @@ class WeightEntryListView(ListView):
     model = WeightEntry
     template_name = "home.html"
     paginate_by = 10
-    queryset = WeightEntry.objects.all().order_by("-recorded", "-updated","-created")
+    # queryset = WeightEntry.objects.all().order_by("-recorded", "-updated","-created")
+    def get_queryset(self):
+        queryset = super(WeightEntryListView, self).get_queryset()
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user).order_by("-recorded", "-updated","-created")
+        else:
+            queryset = WeightEntry.objects.all().order_by("-recorded", "-updated","-created")
+        return queryset
     
 
     def post(self, request, *args, **kwargs):
@@ -132,7 +139,27 @@ class WeightEntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
 
 
+class AllWeightEntryListView(ListView):
+    model = WeightEntry
+    template_name = "weight_entry_list.html"
+    paginate_by = 10
+    queryset = WeightEntry.objects.all().order_by("-recorded", "-updated","-created")
+    
+    
 
+    def post(self, request, *args, **kwargs):
+        """doing POST request"""
+        view = WeightEntryPostView.as_view()
+        return view(request, *args, **kwargs)
+    
+   
+    
+    def get_context_data(self, **kwargs):
+        context = super(AllWeightEntryListView, self).get_context_data(**kwargs)
+        weight_entry_list = WeightEntry.objects.all()
+        context["form"] = WeightEntryForm(initial={'recorded': datetime.now()})
+        context["weight_entry_list"] = weight_entry_list
+        return context
 
 
 

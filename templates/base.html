@@ -42,8 +42,10 @@
                       </a>
                       <!-- <button class="btn btn-primary" type="submit">Button</button> -->
                       <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url "weight_entry_list" %}">View All Weight Entries</a></li>
                         <li><a class="dropdown-item" href="{% url 'user_profile' request.user.pk %}">View Your Profile</a> </li>
                         <li><a class="dropdown-item" href="{% url 'user_change_profile' user.pk %}">Edit Your Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a> </li>
                         {% if user.is_staff %}
                         <li><hr class="dropdown-divider"></li>
