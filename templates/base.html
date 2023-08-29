@@ -33,7 +33,7 @@
                   <button type="button" id="showModal" class="btn btn-success border border-dark " data-bs-toggle="modal" data-bs-target="#weightModalAdd">
                     <i class="bi bi-plus-circle"></i> Record Weight <i class="bi bi-pencil-square"></i>
                 </button>
-                <!-- <a class="btn btn-light border border-dark" href="{% url 'home' %}">View All</a> -->
+               
                 
                 
                   <div class="dropdown">
@@ -41,7 +41,7 @@
                       <a class="btn btn btn-light border border-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{ user.username }} <i class="bi bi-caret-down-square mb-1"></i>
                       </a>
-                      <!-- <button class="btn btn-primary" type="submit">Button</button> -->
+                      
                       <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url "weight_entry_list" %}">View All Weight Entries</a></li>
                         <li><a class="dropdown-item" href="{% url 'user_profile' request.user.pk %}">View Your Profile</a> </li>
@@ -155,9 +155,9 @@ $(document).ready(function() {
   let noteTextarea = noteDiv.find("#id_note");
   // $("#div_id_note").html("<h1>TESTSET</h1>")
   $("#div_id_note").replaceWith('<div id="div_id_note_area" class="my-3">\
-    <a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\
-      <label for="id_note" class="form-label"><button class="btn btn-outline-secondary btn-sm">Note <i class="bi bi-caret-down-square mb-1"></i></button></label></a>\
-      <span class="form-text"> Optional: Add a note for this entry.</span>\
+    <a class="text-decoration-none" id="showNoteBtnHref" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\
+      <label for="id_note" class="form-label"><button id="showNoteBtn" class="btn btn-outline-secondary btn-sm">Note <i class="bi bi-caret-down-square mb-1"></i></button></label>\
+      <span class="form-text"> Optional: Add a note for this entry.</span></a>\
     <div class="collapse" id="collapseExample">\
       <textarea name="note" cols="40" rows="5" class="textarea form-control" id="id_note" placeholder="Weight Entry Note" ></textarea>\
     </div>\
@@ -166,6 +166,18 @@ $(document).ready(function() {
     $("#id_note").val('{{weightentry.note|escapejs}}');
     $("#id_weight").attr("id", "id_weight_2");
     $("#id_weight").val("");
+
+    
+    
+    
+
+    
+    let urlstr = String(window.location);
+    $("#showModal").on("click", function() {
+      if( urlstr.includes("detail") ) {
+        $("#id_note").val("");
+    }
+});
   
 });
   </script>
@@ -181,18 +193,30 @@ $(document).ready(function() {
     let weightDiv2 = modalBody.find("#div_id_weight");
     let weightInput2 = weightDiv2.find("#id_weight");
 
+    let urlstr = String(window.location);
+      var textAreaNote = $("#id_note");
+
+      if( urlstr.includes("edit") ) {
+        // console.log("it includes edit")
+        
+        // console.log(textAreaNote)
+        // console.log(textAreaNote.val().length)
+        if (textAreaNote.val().length > 1) {
+          // alert(textAreaNote.val());
+          $("#showNoteBtn").click();
+        } 
+  }
+
+
     
-
-
-
 
 
 // $("#div_id_note").html("<h1>TESTSET</h1>")
 $("#div_id_note").replaceWith('<div id="div_id_note_area" class="my-3">\
-  <a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\
-    <label for="id_note" class="form-label"><button class="btn btn-outline-secondary btn-sm">Note <i class="bi bi-caret-down-square mb-1"></i></button></label></a>\
-    <span class="form-text"> Optional: Add a note for this entry.</span>\
-  <div class="collapse" id="collapseExample">\
+  <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="false" aria-controls="collapseExample2">\
+    <label for="id_note" class="form-label"><button id="showNoteBtn2" class="btn btn-outline-secondary btn-sm">Note <i id="noteIcon" class="bi bi-caret-down-square mb-1"></i></button></label>\
+    <span class="form-text"> Optional: Add a note for this entry.</span></a>\
+  <div class="collapse" id="collapseExample2">\
     <textarea name="note" cols="40" rows="5" class="textarea form-control" id="id_note_2" placeholder="Weight Entry Note"></textarea>\
   </div>\
       <div id="hint_id_note" class="form-text"></div>');
@@ -203,7 +227,7 @@ $("#div_id_note").replaceWith('<div id="div_id_note_area" class="my-3">\
   
 </script>
 
-  
+
   
   
   <!-- Modal -->

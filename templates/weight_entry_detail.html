@@ -6,20 +6,44 @@
 
 <div class="row justify-content-md-start">
 
-    <div class="col-sm-3 pb-2 mb-2">
+    <div class="col-sm-6 pb-2 mb-2">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">{{weightentry.weight}}lbs </h5>
-                <p>{{weightentry.recorded}}</p>
-                <p>by <span class="fw-bold">{{weightentry.user}}</span></p>
-                <p> Last Updated: {{weightentry.updated}} 
-                    <br>
-                    <small><small>Added to Log On: {{weightentry.created}}</small></small>
-                </p>
+                <span class="fs-5 fw-medium">{{weightentry.weight}} lbs</span> on <span class="fw-medium fst-italic">{{weightentry.recorded|date:"l"}}, {{weightentry.recorded|date:"M jS"}} @ {{weightentry.recorded|date:"g:i A"}}</span>
+           
+            <p>
+                {% if weightentry.note|length >= 1  %}
+                    {{weightentry.note|slice:"30"}}
+                    {% if weightentry.note|length > 30 %}
+                        ... <a href="{% url "weight_entry_detail" weightentry.pk %}">view full note</a>.
+                    {% endif %}
+                {% else %}
+                <br>
+                {% endif %}
+            </p>
+            
+            <p class="lh-1">
+                <small><small>Entry <span class="text-muted">{{weightentry.pk}}</span> by <a class="fw-bold text-black" href="{% url "user_profile" weightentry.user.pk %}">{{weightentry.user}}</a> {% if weightentry.updated|date:"m/d/y H:i:s" != weightentry.created|date:"m/d/y H:i:s" %}| Last Updated: {{weightentry.updated}} {% endif %}</small></small>
+                <br>
+                <small>
+                    <small>Added to Log On: {{weightentry.created}}</small>
+                    <a href="#" 
+                        class="badge rounded-pill text-dark" 
+                        data-bs-toggle="popover"
+                        data-bs-trigger="hover focus"
+                        data-bs-content="This is the date that the entry was actually added to the log.
+                                        Often times, the time that the weight was measured is different than the time the user actually adds it to the log. 
+                                        For example, if I measured myself at 8AM but I forgot to add it to the log until 3pm.
+                                        This is just a means of distinguishing the two times/dates.">
+                            <i class="bi bi-question-circle"></i>
+                    </a> 
+                    <!-- can also add ' data-bs-title="Popover title" ' to href to give the popup card a title -->
+                </small>
+            </p>
                 
                 
                 {% if request.user == weightentry.user %}
-                <a href="{% url "weight_entry_update" weightentry.pk %}" class="btn btn-primary">Edit Entry</a>
+                <a href="{% url "weight_entry_update" weightentry.pk %}" class="btn btn-primary border border-secondary">Edit Entry</a>
                 <a href="{% url "weight_entry_delete" weightentry.pk %}" class="btn btn-danger border border-secondary">Delete Entry</a>
                 {% endif %}
                     

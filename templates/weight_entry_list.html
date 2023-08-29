@@ -58,9 +58,8 @@
 <div class="col-sm-6 pb-2 mb-2">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">{{entry.weight}} lbs </h5> 
-            <p>Recorded On: {{entry.recorded}}</p>
-    
+            <span class="fs-5 fw-medium">{{entry.weight}} lbs</span> on <span class="fw-medium fst-italic">{{entry.recorded|date:"l"}}, {{entry.recorded|date:"M jS"}} @ {{entry.recorded|date:"g:i A"}}</span>
+           
             <p>
                 {% if entry.note|length >= 1  %}
                     {{entry.note|slice:"30"}}
@@ -75,7 +74,20 @@
             <p class="lh-1">
                 <small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <a class="fw-bold text-black" href="{% url "user_profile" entry.user.pk %}">{{entry.user}}</a> {% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small>
                 <br>
-                <small><small>Added to Log On: {{entry.created}}</small></small>
+                <small>
+                    <small>Added to Log On: {{entry.created}}</small>
+                    <a href="#" 
+                        class="badge rounded-pill text-dark" 
+                        data-bs-toggle="popover"
+                        data-bs-trigger="hover focus"
+                        data-bs-content="This is the date that the entry was actually added to the log.
+                                        Often times, the time that the weight was measured is different than the time the user actually adds it to the log. 
+                                        For example, if I measured myself at 8AM but I forgot to add it to the log until 3pm.
+                                        This is just a means of distinguishing the two times/dates.">
+                            <i class="bi bi-question-circle"></i>
+                    </a> 
+                    <!-- can also add ' data-bs-title="Popover title" ' to href to give the popup card a title -->
+                </small>
             </p>
             
             <a href="{% url "weight_entry_detail" entry.pk %}" class="btn btn-primary border border-secondary">Details</a>
@@ -87,7 +99,7 @@
         </div>
     </div> 
 </div>
-{% endfor %}  
+{% endfor %}    
 </div>
 {% if is_paginated %}
 <nav aria-label="Page navigation example" class="justify-content-center mb-4 ms-5">
