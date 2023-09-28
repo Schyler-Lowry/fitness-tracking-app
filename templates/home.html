@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load range_filter %}
-
+{% load static %}
 {% block navtabs %}
 {% if is_paginated %}
     <ul class="pagination ">
@@ -51,6 +51,7 @@
 
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
 
 {% include "partials/_messages.html" %}
 
@@ -61,7 +62,7 @@
         <div class="card-body">
             <span class="fs-5 fw-medium">{{entry.weight}} lbs</span> on <span class="fw-medium fst-italic">{{entry.recorded|date:"l"}}, {{entry.recorded|date:"M jS"}} @ {{entry.recorded|date:"g:i A"}}</span>
            
-            <p>
+            <!-- <p>
                 {% if entry.note|length >= 1  %}
                     {{entry.note|slice:"30"}}
                     {% if entry.note|length > 30 %}
@@ -70,8 +71,22 @@
                 {% else %}
                 <br>
                 {% endif %}
+            </p> -->
+            
+            <p class="cutoff-text">
+                {{entry.note}}
+                
             </p>
             
+            {% if entry.note|length >= 72 %}
+            <input class="expand-btn" type="checkbox">
+            {% else %}
+            <input class="spacer-btn" type="checkbox">
+            
+
+            
+            {% endif %}
+                
             <p class="lh-1">
                 <small><small>Entry <span class="text-muted">{{entry.pk}}</span> by <a class="fw-bold text-black" href="{% url "user_profile" entry.user.pk %}">{{entry.user}}</a> {% if entry.updated|date:"m/d/y H:i:s" != entry.created|date:"m/d/y H:i:s" %}| Last Updated: {{entry.updated}} {% endif %}</small></small>
                 <br>

@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load range_filter %}
+{% load static %}
 
 {% block content %}
 {% include "partials/_messages.html" %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
 
 <div class="row justify-content-md-start">
 
@@ -11,7 +13,7 @@
             <div class="card-body">
                 <span class="fs-5 fw-medium">{{weightentry.weight}} lbs</span> on <span class="fw-medium fst-italic">{{weightentry.recorded|date:"l"}}, {{weightentry.recorded|date:"M jS"}} @ {{weightentry.recorded|date:"g:i A"}}</span>
            
-            <p>
+            <!-- <p>
                 {% if weightentry.note|length >= 1  %}
                     {{weightentry.note|slice:"30"}}
                     {% if weightentry.note|length > 30 %}
@@ -20,7 +22,12 @@
                 {% else %}
                 <br>
                 {% endif %}
+            </p> -->
+            <p class="cutoff-text">
+                {{weightentry.note}}
+                
             </p>
+            <input class="expand-btn" type="checkbox">
             
             <p class="lh-1">
                 <small><small>Entry <span class="text-muted">{{weightentry.pk}}</span> by <a class="fw-bold text-black" href="{% url "user_profile" weightentry.user.pk %}">{{weightentry.user}}</a> {% if weightentry.updated|date:"m/d/y H:i:s" != weightentry.created|date:"m/d/y H:i:s" %}| Last Updated: {{weightentry.updated}} {% endif %}</small></small>
