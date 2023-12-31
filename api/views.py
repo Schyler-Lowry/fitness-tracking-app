@@ -1,9 +1,233 @@
 
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views import View
+from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+import json
+from django.contrib.auth import authenticate, login, logout, user_logged_in
+from django.contrib.sessions.backends.db import SessionStore
 
 from fitness.models import WeightEntry
 from accounts.models import CustomUser
+from django.db.models import F
+from django.forms.models import model_to_dict
+
+from django.contrib.auth.decorators import login_required
+
+
+# @login_required
+@method_decorator(login_required, name='dispatch')
+def check_auth_status(request):
+    """Check if the user is authenticated."""
+    return JsonResponse({
+        'is_authenticated': request.user.is_authenticated,
+        'username': request.user.username if request.user.is_authenticated else ''
+    })
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiLogoutView(View):
+    """Log a user out"""
+
+    def get(self, request, *args, **kwargs):
+        """GET request"""
+        # Log the user out
+        logout(request)
+
+        # Return a JSON response
+        return JsonResponse({'message': 'Logged out successfully'}, status=200)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiCheckLoginView(View):
+    """Check if a user is logged in"""
+
+    def get(self, request, *args, **kwargs):
+        """GET request"""
+        # Check if the user is authenticated
+
+        print(request.user)
+        if request.user.is_authenticated:
+            # The user is logged in
+            user_dict = model_to_dict(request.user)
+            return JsonResponse({'message': 'User is logged in', 'user': user_dict}, status=200)
+        else:
+            # The user is not logged in
+            return JsonResponse({'message': 'User is not logged in'}, status=200)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiLoginView(View):
+    """Log a user in"""
+
+    def post(self, request, *args, **kwargs):
+        """POST request"""
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Extract the username and password from the JSON
+        username = data.get('username')
+        password = data.get('password')
+
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Log the user in
+            login(request, user)
+
+            # Save the session data manually
+            request.session.save()
+
+            if request.user.is_authenticated:
+                print("Authenticated...")
+                print(request.user)
+
+            # Return a JSON response
+            return JsonResponse({'message': 'Logged in successfully'}, status=200)
+        else:
+            # Authentication failed
+            return JsonResponse({'message': 'Invalid username or password'}, status=401)
+
+# @method_decorator(csrf_exempt, name='dispatch')
+# class ApiLoginView(View):
+#     """Log a user in"""
+
+#     def post(self, request, *args, **kwargs):
+#         """POST request"""
+#         # Parse the JSON data from the request body
+#         data = json.loads(request.body)
+
+#         # Extract the username and password from the JSON
+#         username = data.get('username')
+#         password = data.get('password')
+
+#         # Authenticate the user
+#         user = authenticate(request, username=username, password=password)
+
+#         if user is not None:
+#             # Log the user in
+#             login(request, user)
+
+#             # Save the session data manually
+#             request.session.save()
+
+#             # Return a JSON response
+#             return JsonResponse({'message': 'Logged in successfully'}, status=200)
+#         else:
+#             # Authentication failed
+#             return JsonResponse({'message': 'Invalid username or password'}, status=401)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiWeightEntryDeleteView(View):
+    """Delete a weight entry"""
+
+    def post(self, request, *args, **kwargs):
+        """POST request"""
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Extract the weight entry data from the JSON
+        id = data.get('id')
+
+        # Get the WeightEntry object
+        try:
+            weight_entry = WeightEntry.objects.get(id=id)
+        except WeightEntry.DoesNotExist:
+            raise Http404("WeightEntry does not exist")
+
+        # Update the weight field
+
+        weight_entry.delete()
+
+        # Return a JSON response
+        return JsonResponse({'message': 'WeightEntry deleted successfully'}, status=200)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiWeightEntryAddView(View):
+    """Add a weight entry"""
+
+    def post(self, request, *args, **kwargs):
+        print("Received CSRF token: ", request.META.get('HTTP_X_CSRFTOKEN'))
+        """POST request"""
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Extract the weight entry data from the JSON
+        weight = data.get('weight')
+        recorded = data.get("recorded")
+        note = data.get("note")
+        user_id = data.get("user_id")
+
+        # print(data)
+
+        # Create a new WeightEntry object and save it to the database
+        weight_entry = WeightEntry.objects.create(
+            weight=weight, recorded=recorded, note=note, user_id=user_id)
+
+        # Return a JSON response
+        return JsonResponse({'message': 'WeightEntry added successfully', 'id': weight_entry.id}, status=201)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiWeightEntryUpdateViewWithObject(View):
+    """Update a specific weight entry"""
+
+    def post(self, request, *args, **kwargs):
+        """POST request"""
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Extract the weight entry data from the JSON
+        id = data.get('id')
+        weight = data.get('weight')
+        note = data.get("note")
+        recorded = data.get("recorded")
+
+        # Get the WeightEntry object
+        try:
+            weight_entry = WeightEntry.objects.get(id=id)
+        except WeightEntry.DoesNotExist:
+            raise Http404("WeightEntry does not exist")
+
+        # Update the weight field
+        weight_entry.weight = weight
+        weight_entry.note = note
+        weight_entry.recorded = recorded
+        weight_entry.save()
+
+        # Return a JSON response
+        return JsonResponse({'message': 'WeightEntry updated successfully', "updated_entry": model_to_dict(weight_entry)}, status=200)
+
+
+@method_decorator([csrf_exempt, login_required], name='dispatch')
+class ApiWeightEntryUpdateView(View):
+    """Update a specific weight entry"""
+
+    def post(self, request, weightentry_pk, *args, **kwargs):
+        """POST request"""
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Extract the weight entry data from the JSON
+        # id = data.get('id')
+        weight = data.get('weight')
+
+        # Get the WeightEntry object
+        try:
+            weight_entry = WeightEntry.objects.get(id=weightentry_pk)
+        except WeightEntry.DoesNotExist:
+            raise Http404("WeightEntry does not exist")
+
+        # Update the weight field
+        weight_entry.weight = weight
+        weight_entry.save()
+
+        # Return a JSON response
+        return JsonResponse({'message': 'WeightEntry updated successfully'}, status=200)
 
 
 class ApiWeightEntryListView(View):
@@ -11,11 +235,40 @@ class ApiWeightEntryListView(View):
 
     def get(self, request, *args, **kwargs):
         """GET request"""
-        weightentries = list(
-            WeightEntry.objects.all().select_related().values()
-        )
+        weightentries = WeightEntry.objects.all().select_related("user"
+                                                                 ).annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
 
-        return JsonResponse(weightentries, safe=False)
+        # Create a Paginator object
+        # Show 10 weight entries per page
+        paginator = Paginator(weightentries, 10)
+
+        # Get the page number from the query params
+        page_number = request.GET.get('page')
+
+        # Get the objects for the requested page
+        page_obj = paginator.get_page(page_number)
+
+        # Convert the page objects to a list
+        weightentries_page = list(page_obj)
+
+        # Get the total number of pages
+        total_pages = paginator.num_pages
+        total_entries = paginator.count
+
+        # return JsonResponse(weightentries_page, safe=False)
+        return JsonResponse({'weightentries': weightentries_page, 'total_pages': total_pages, 'total_entries': total_entries}, safe=False)
+
+
+# class ApiWeightEntryListViewNonPaginated(View):
+#     """List of weight entries"""
+
+#     def get(self, request, *args, **kwargs):
+#         """GET request"""
+#         weightentries = list(
+#             WeightEntry.objects.all().select_related().values()
+#         )
+
+#         return JsonResponse(weightentries, safe=False)
 
 
 class ApiWeightEntryDetailView(View):
