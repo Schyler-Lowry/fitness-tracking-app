@@ -372,7 +372,7 @@ export function EditWeightEntryForm({ data, onClose }) {
             type="datetime-local"
             placeholder="date/time"
             {...register("dateTime", { required: "This field is required" })}
-            defaultValue={format(data.recorded, "yyyy-MM-dd hh:mm")}
+            defaultValue={format(data.recorded, "yyyy-MM-dd kk:mm")}
             // defaultValue={formData.recorded}
           />
         </Box>
