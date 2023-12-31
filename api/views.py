@@ -72,6 +72,7 @@ class ApiLoginView(View):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
+        user_dict = model_to_dict(request.user)
 
         if user is not None:
             # Log the user in
@@ -85,7 +86,7 @@ class ApiLoginView(View):
                 print(request.user)
 
             # Return a JSON response
-            return JsonResponse({'message': 'Logged in successfully'}, status=200)
+            return JsonResponse({'message': 'Logged in successfully', "user": user_dict}, status=200)
         else:
             # Authentication failed
             return JsonResponse({'message': 'Invalid username or password'}, status=401)
