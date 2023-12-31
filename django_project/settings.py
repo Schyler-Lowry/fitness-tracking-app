@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -65,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 
@@ -83,7 +83,9 @@ MIDDLEWARE = [
 
 # CSRF_COOKIE_SECURE = False
 # SESSION_COOKIE_SECURE = False
-
+CORS_ALLOWED_ORIGINS = [
+    "http://10.0.0.155:5173",  # Or your frontend's domain
+]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -93,7 +95,7 @@ CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
 
-CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
 
 CSRF_COOKIE_SECURE = True
