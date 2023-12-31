@@ -26,7 +26,7 @@ def check_auth_status(request):
     })
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class ApiLogoutView(View):
     """Log a user out"""
 
@@ -39,7 +39,7 @@ class ApiLogoutView(View):
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class ApiCheckLoginView(View):
     """Check if a user is logged in"""
 
@@ -57,7 +57,7 @@ class ApiCheckLoginView(View):
             return JsonResponse({'message': 'User is not logged in'}, status=200)
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class ApiLoginView(View):
     """Log a user in"""
 
