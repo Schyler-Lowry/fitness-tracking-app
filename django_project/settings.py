@@ -92,11 +92,13 @@ CORS_ALLOW_CREDENTIALS = True
 # SESSION_COOKIE_SAMESITE = None
 # CSRF_COOKIE_SAMESITE = None
 
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SAMESITE = 'Lax'
-# SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 # SESSION_FILE_PATH = 'C:\\Users\\schyl\\schyler_coding_projects\\Python_Stuff\\fitness-tracking-app\\sessions'
