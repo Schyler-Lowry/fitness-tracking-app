@@ -11,8 +11,11 @@ from .views import (
     ApiCheckLoginView,
     check_auth_status,
     ApiLogoutView,
-    ApiWeightEntryDeleteView
-
+    ApiWeightEntryDeleteView,
+    login_view,
+    logout_view,
+    session_view,
+    whoami_view
 )
 
 urlpatterns = [
@@ -63,4 +66,8 @@ urlpatterns = [
         ApiWeightEntryDeleteView.as_view(),
         name="api_weight_entry_delete",
     ),
+    # path("login-view/", login_view, name="api_login_view"),
+    # path("logout-view/", logout_view, name="api_logout_view"),
+    # path("session-view/", session_view, name="api_session_view"),
+    # path("whoami-view/", whoami_view, name="api_whoami_view"),
 ]

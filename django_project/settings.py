@@ -68,7 +68,21 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+
+# CSRF_COOKIE_SAMESITE = 'Strict'
+# SESSION_COOKIE_SAMESITE = 'Strict'
+# CSRF_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_HTTPONLY = False
+# CSRF_COOKIE_SECURE = False
+# SESSION_COOKIE_SECURE = False
+
+# Set both to True for production.
+# CSRF_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_HTTPONLY = True
+
+
 CORS_ALLOW_ALL_ORIGINS = True
+
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -79,14 +93,14 @@ CORS_ALLOW_CREDENTIALS = True
 # CSRF_COOKIE_SAMESITE = None
 
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# SESSION_COOKIE_SAMESITE = 'Lax'
 
-# SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 # SESSION_FILE_PATH = 'C:\\Users\\schyl\\schyler_coding_projects\\Python_Stuff\\fitness-tracking-app\\sessions'
-
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
 
 ROOT_URLCONF = 'django_project.urls'
 TEMPLATES = [

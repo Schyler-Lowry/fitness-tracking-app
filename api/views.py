@@ -2,11 +2,12 @@
 from django.http import JsonResponse, Http404
 from django.views import View
 from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 import json
 from django.contrib.auth import authenticate, login, logout, user_logged_in
 from django.contrib.sessions.backends.db import SessionStore
+from django.views.decorators.http import require_POST
 
 from fitness.models import WeightEntry
 from accounts.models import CustomUser
@@ -16,14 +17,59 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+def login_view(request):
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+
+    if username is None or password is None:
+        return JsonResponse({"detail": "Provide username/password"})
+    user = authenticate(username=username, password=password)
+    if user is None:
+        return JsonResponse({"detail": "Invalid credentials"})
+    login(request, user)
+    request.session.save()
+
+    user_dict = model_to_dict(user)
+    return JsonResponse({'message': 'Logged in successfully', "user": user_dict}, status=200)
+
+
+def logout_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"detail": "Not logged in"})
+    logout(request)
+    return JsonResponse({"detail": "Logged out"})
+
+
+@ensure_csrf_cookie
+def session_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"is_authenticated": False})
+    return JsonResponse({"is_authenticated": True})
+
+
+@ensure_csrf_cookie
+def whoami_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"username": "Anonymous User"})
+    return JsonResponse({"username": request.user.username})
+
+
 # @login_required
-@method_decorator(login_required, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 def check_auth_status(request):
     """Check if the user is authenticated."""
-    return JsonResponse({
-        'is_authenticated': request.user.is_authenticated,
-        'username': request.user.username if request.user.is_authenticated else ''
-    })
+    # print(request.session)
+    if not request.user.is_authenticated:
+        return JsonResponse({"is_authenticated": False})
+    return JsonResponse({"is_authenticated": True})
+
+    # return JsonResponse({
+    #     'is_authenticated': request.user.is_authenticated,
+    #     'username': request.user.username if request.user.is_authenticated else ''
+    # })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -47,7 +93,10 @@ class ApiCheckLoginView(View):
         """GET request"""
         # Check if the user is authenticated
 
+        session_value = request.session.get("my_session")
+
         print(request.user)
+        print("Session Value: ", session_value)
         if request.user.is_authenticated:
             # The user is logged in
             user_dict = model_to_dict(request.user)
@@ -72,7 +121,7 @@ class ApiLoginView(View):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
-        user_dict = model_to_dict(request.user)
+        user_dict = model_to_dict(user)
 
         if user is not None:
             # Log the user in
@@ -80,13 +129,16 @@ class ApiLoginView(View):
 
             # Save the session data manually
             request.session.save()
+            request.session["my_session"] = "schyl"
 
+            session_value = request.session.get("my_session")
             if request.user.is_authenticated:
                 print("Authenticated...")
                 print(request.user)
+                print("Session Value: ", session_value)
 
             # Return a JSON response
-            return JsonResponse({'message': 'Logged in successfully', "user": user_dict}, status=200)
+            return JsonResponse({'message': 'Logged in successfully', "user": user_dict, "session_value": session_value}, status=200)
         else:
             # Authentication failed
             return JsonResponse({'message': 'Invalid username or password'}, status=401)
