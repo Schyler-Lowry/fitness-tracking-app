@@ -138,8 +138,6 @@ function Main() {
     isAuthenticated,
   } = useCheckLogin();
 
-  // const { isAuthenticated } = useAuthentication();
-
   // const { testFunc } = useModalContext();
   // testFunc();
   // {Array.from({ length: 10 }).map((_, index) => ())}
@@ -462,7 +460,6 @@ export function DisplayData({
   setIsModalOpen,
 }) {
   const { user, isFetching, error, isError, isAuthenticated } = useCheckLogin();
-  // const { isAuthenticated } = useAuthentication();
   if (!data) return;
   // console.log(format(data.recorded, "EEEE MMM do, yyyy @ HH:mm a"));
   // const recorded = format(data.recorded, "EEEE MMM do, yyyy @ HH:mm a");

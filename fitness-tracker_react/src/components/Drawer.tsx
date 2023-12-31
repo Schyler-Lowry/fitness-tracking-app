@@ -51,7 +51,6 @@ export default function DrawerMenu() {
     refetch,
   } = useCheckLogin();
 
-  // const { isAuthenticated, setIsAuthenticated } = useAuthentication();
   // console.log("user?", user);
   // console.log("isAuth?", isAuthenticated);
   const checkLoginUrl = "http://10.0.0.155:8000/api/checklogin";
@@ -96,9 +95,7 @@ export default function DrawerMenu() {
   function handleLogout() {
     logoutApi().then((data) => {
       console.log(data);
-      // refetch();
-      // setIsAuthenticated(false);
-      localStorage.removeItem("user");
+      refetch();
     });
   }
 

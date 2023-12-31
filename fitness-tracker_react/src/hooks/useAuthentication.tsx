@@ -18,7 +18,6 @@ const loginApiUrl = "http://10.0.0.155:8000/api/login";
 
 export function useLogin() {
   const queryClient = useQueryClient();
-  const { setIsAuthenticated, setLoggedInUser } = useAuthentication();
   const { mutate: login, isPending: isLoggingIn } = useMutation({
     mutationFn: loginApi,
     onSuccess: (data) => {
@@ -49,8 +48,6 @@ const checkLoginApiUrl = "http://10.0.0.155:8000/api/checklogin";
 const checkAuthUrl = "http://10.0.0.155:8000/api/check-auth";
 
 export function useCheckLogin() {
-  // const { isAuthenticated } = useAuthentication();
-
   const {
     data: user,
     isFetching,

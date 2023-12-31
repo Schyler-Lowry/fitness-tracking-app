@@ -8,12 +8,10 @@ import { AuthenticationProvider } from "./context/AuthenticationContext";
 function App() {
   return (
     <BrowserRouter>
-      <AuthenticationProvider>
-        <Routes>
-          {/* <Route element={<Page3 />} path="static" /> */}
-          <Route element={<Page3 />} index />
-        </Routes>
-      </AuthenticationProvider>
+      <Routes>
+        {/* <Route element={<Page3 />} path="static" /> */}
+        <Route element={<Page3 />} index />
+      </Routes>
     </BrowserRouter>
   );
 }
