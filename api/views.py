@@ -173,7 +173,7 @@ class ApiLoginView(View):
 #             return JsonResponse({'message': 'Invalid username or password'}, status=401)
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator([csrf_exempt], name='dispatch')
 class ApiWeightEntryDeleteView(View):
     """Delete a weight entry"""
 
@@ -199,7 +199,7 @@ class ApiWeightEntryDeleteView(View):
         return JsonResponse({'message': 'WeightEntry deleted successfully'}, status=200)
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator([csrf_exempt], name='dispatch')
 class ApiWeightEntryAddView(View):
     """Add a weight entry"""
 
@@ -225,7 +225,7 @@ class ApiWeightEntryAddView(View):
         return JsonResponse({'message': 'WeightEntry added successfully', 'id': weight_entry.id}, status=201)
 
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator([csrf_exempt], name='dispatch')
 class ApiWeightEntryUpdateViewWithObject(View):
     """Update a specific weight entry"""
 
