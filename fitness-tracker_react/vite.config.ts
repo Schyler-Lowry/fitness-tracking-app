@@ -5,6 +5,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "/static/",
+  // build: {
+  //   outDir: "fitness-tracker_react/dist",
+  // },
 });
 
 // import basicSsl from "@vitejs/plugin-basic-ssl";
