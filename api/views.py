@@ -96,7 +96,8 @@ class ApiCheckLoginView(View):
         session_value = request.session.get("my_session")
 
         print(request.user)
-        print("Session Value: ", session_value)
+        print("Session Items: ", request.session.items())
+
         if request.user.is_authenticated:
             # The user is logged in
             user_dict = model_to_dict(request.user)
@@ -135,7 +136,7 @@ class ApiLoginView(View):
             if request.user.is_authenticated:
                 print("Authenticated...")
                 print(request.user)
-                print("Session Value: ", session_value)
+                print("Session Items: ", request.session.items())
 
             # Return a JSON response
             return JsonResponse({'message': 'Logged in successfully', "user": user_dict, "session_value": session_value}, status=200)

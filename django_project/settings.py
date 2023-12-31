@@ -58,8 +58,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,10 +71,10 @@ MIDDLEWARE = [
 
 # CSRF_COOKIE_SAMESITE = 'Strict'
 # SESSION_COOKIE_SAMESITE = 'Strict'
-# CSRF_COOKIE_HTTPONLY = False
-# SESSION_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = False
 # CSRF_COOKIE_SECURE = False
-# SESSION_COOKIE_SECURE = False
+# SESSION_COOKIE_SECURE = True
 
 # Set both to True for production.
 # CSRF_COOKIE_HTTPONLY = False
@@ -83,40 +83,44 @@ MIDDLEWARE = [
 
 # CSRF_COOKIE_SECURE = False
 # SESSION_COOKIE_SECURE = False
-CORS_ALLOWED_ORIGINS = [
-    "http://10.0.0.155:5173",  # Or your frontend's domain
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://10.0.0.155:5173",
+#     "http://10.0.0.155:8000",
+#     "http://localhost:8000",
+# ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOW_CREDENTIALS = True
 
-SESSION_COOKIE_SAMESITE = None
-CSRF_COOKIE_SAMESITE = None
+# SESSION_COOKIE_SAMESITE = None
+# CSRF_COOKIE_SAMESITE = None
 
-CSRF_COOKIE_HTTPONLY = True
-SESSION_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_HTTPONLY = True
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = False
 # SESSION_COOKIE_SECURE = False
-# CSRF_COOKIE_SAMESITE = 'Lax'
-# SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
-SESSION_COOKIE_DOMAIN = 'weight-tracking-app-a9db95db2d03.herokuapp.com'
-CSRF_COOKIE_DOMAIN = 'weight-tracking-app-a9db95db2d03.herokuapp.com'
+# SESSION_COOKIE_DOMAIN = 'weight-tracking-app-a9db95db2d03.herokuapp.com'
+# CSRF_COOKIE_DOMAIN = 'weight-tracking-app-a9db95db2d03.herokuapp.com'
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 # SESSION_FILE_PATH = 'C:\\Users\\schyl\\schyler_coding_projects\\Python_Stuff\\fitness-tracking-app\\sessions'
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 ROOT_URLCONF = 'django_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        # 'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [BASE_DIR.joinpath("fitness-tracker_react")],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -192,8 +196,11 @@ EMAIL_USE_SSL = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "fitness-tracker_react" / "dist"]
+
+
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
