@@ -9,8 +9,8 @@ export async function getAllEntriesApi(page: string) {
   // const entriesUrl = `https://weight-tracking-app-a9db95db2d03.herokuapp.com/api/entries/list/?page=${page}`;
   const entriesUrl = herokuUrls.entries + `?page=${page}`;
 
-  console.log("apiGetAllEntries page:", page);
-  console.log("apiGetAllEntries url:", entriesUrl);
+  // console.log("apiGetAllEntries page:", page);
+  // console.log("apiGetAllEntries url:", entriesUrl);
 
   const response = await fetch(entriesUrl);
   if (!response.ok) {
@@ -101,7 +101,7 @@ export async function loginApi(credentials = {}) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  console.log(data);
+  // console.log(data);
   return data;
 }
 
