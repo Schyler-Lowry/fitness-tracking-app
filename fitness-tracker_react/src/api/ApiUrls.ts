@@ -18,25 +18,25 @@ const herokuUrl = "https://weight-tracking-app-a9db95db2d03.herokuapp.com/api/";
 //   checklogin: herokuUrl + "checklogin",
 //   logout: herokuUrl + "logout",
 // };
-export const herokuUrls = {
-  entries: djangoUrl + "entries/list/",
-  add: djangoUrl + "entries/add",
-  edit: djangoUrl + "entries/edit",
-  delete: djangoUrl + "entries/delete",
-
-  login: djangoUrl + "login",
-  checklogin: djangoUrl + "checklogin",
-  logout: djangoUrl + "logout",
-};
 // export const herokuUrls = {
-//   entries: "/api/entries/list/",
-//   add: "/api/entries/add",
-//   edit: "/api/entries/edit",
-//   delete: "/api/entries/delete",
-//   login: "/api/login",
-//   checklogin: "/api/checklogin",
-//   logout: "/api/logout",
+//   entries: djangoUrl + "entries/list/",
+//   add: djangoUrl + "entries/add",
+//   edit: djangoUrl + "entries/edit",
+//   delete: djangoUrl + "entries/delete",
+
+//   login: djangoUrl + "login",
+//   checklogin: djangoUrl + "checklogin",
+//   logout: djangoUrl + "logout",
 // };
+export const herokuUrls = {
+  entries: "/api/entries/list/",
+  add: "/api/entries/add",
+  edit: "/api/entries/edit",
+  delete: "/api/entries/delete",
+  login: "/api/login",
+  checklogin: "/api/checklogin",
+  logout: "/api/logout",
+};
 
 export const djangoUrls = {
   entries: djangoUrl + "entries/list/",
