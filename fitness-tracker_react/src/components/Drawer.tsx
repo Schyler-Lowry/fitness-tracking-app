@@ -139,7 +139,7 @@ export default function DrawerMenu() {
         icon={
           <Image
             // boxSize="3em"
-            src="/icon.png"
+            src="/static/icon.png"
           />
         }
       />

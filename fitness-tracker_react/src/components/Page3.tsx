@@ -192,7 +192,7 @@ function Main() {
             /> */}
             <Image
               // bg={"blue.200"}
-              src="/banner4.png"
+              src="/static/banner4.png"
               // objectFit="cover"
               h="50px"
             />
@@ -518,7 +518,7 @@ export function DisplayData({
               <Box>
                 <Image
                   boxSize={"30px"}
-                  src={`/daysOfWeekIcons/${recorded.dayOfWeek.toLowerCase()}-icon.png`}
+                  src={`/static/daysOfWeekIcons/${recorded.dayOfWeek.toLowerCase()}-icon.png`}
                 />
               </Box>
             </Box>

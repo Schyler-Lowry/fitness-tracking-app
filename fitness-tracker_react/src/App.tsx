@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
       <AuthenticationProvider>
         <Routes>
-          <Route element={<Page3 />} path="static" />
+          {/* <Route element={<Page3 />} path="static" /> */}
           <Route element={<Page3 />} index />
         </Routes>
       </AuthenticationProvider>
