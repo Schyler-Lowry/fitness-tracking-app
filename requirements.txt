@@ -7,6 +7,7 @@ dj-email-url==1.0.6
 Django==4.2.4
 django-bootstrap-datepicker-plus==5.0.4
 django-cache-url==3.4.4
+django-cors-headers==4.3.1
 django-crispy-forms==2.0
 environs==9.5.0
 exceptiongroup==1.1.3
