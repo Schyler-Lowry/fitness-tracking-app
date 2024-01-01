@@ -22,22 +22,15 @@ export function useLogin() {
     mutationFn: loginApi,
     onSuccess: (data) => {
       console.log("useLogin", data);
-      // queryClient.setQueryData(["user"], data.user);
-      // if (data.user.is_active) {
-      //   const user = {
-      //     username: data.user.username,
-      //     id: data.user.id,
-      //   };
-      //   localStorage.setItem("user", JSON.stringify(user));
-      // setLoggedInUser(user);
-      // setIsAuthenticated(true);
-      // }
-
+      // queryClient.setQueryData(["user"], data.user)
       queryClient.refetchQueries({ queryKey: ["user"] });
     },
-    onError: (err) => {
-      console.log("ERROR", err);
-    },
+    // onError: (err) => {
+    //   console.log("ERROR", err);
+    //   // const status = 401;
+    //   return { status: 401, message: "the error" };
+    //   // throw new Error("ERROR", err);
+    // },
   });
 
   return { login, isLoggingIn };

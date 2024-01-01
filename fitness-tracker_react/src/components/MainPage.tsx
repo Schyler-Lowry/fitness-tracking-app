@@ -47,11 +47,6 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   LinkBox,
   LinkOverlay,
   useHighlight,
@@ -62,74 +57,45 @@ import {
   MenuItem,
   MenuDivider,
 } from "@chakra-ui/react";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from "@tanstack/react-query";
+
 import { useContext, useEffect, useState } from "react";
 import DrawerMenu from "./Drawer";
 import AlertItem from "./Alert";
-import MyModal, { Lorem, useModalContext } from "./Modal";
+import MyModal, { Lorem } from "./Modal";
 import { format } from "date-fns";
-import { memo } from "react";
 import {
   AddWeightEntryModal,
   DeleteWeightEntryModal,
   EditWeightEntryModal,
-  TestModal,
 } from "./Modal2";
 import { useCheckLogin } from "../hooks/useAuthentication";
 import { useGetAllWeightEntries } from "../hooks/useWeightEntries";
 import { useSearchParams } from "react-router-dom";
-import {
-  BsClock,
-  BsClockFill,
-  BsPenFill,
-  BsPencil,
-  BsPencilSquare,
-  BsTrash,
-  BsTrashFill,
-} from "react-icons/bs";
+import { BsClock } from "react-icons/bs";
 import { HiDotsVertical } from "react-icons/hi";
 
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
-import DropdownMenu from "./DropdownMenu";
-import { useAuthentication } from "../context/AuthenticationContext";
-const Content = chakra("div", {
-  baseStyle: {
-    display: "grid",
-    backgroundColor: "gray.100",
-    // mt: "-100px",
-    p: 4,
-    // w: "100vw",
-    w: "calc(100vw - 16px)",
 
-    gridTemplateColumns: {
-      base: "1fr",
-      lg: "repeat(2,1fr)",
-    },
-    gridTemplateRows: {
-      base: "repeat(3, auto)",
-      lg: "repeat(2,auto)",
-    },
-    gridGap: "4",
-    boxSizing: "border-box",
-  },
-});
+import SkeletonCard from "./SkeletonCard";
 
-export default function Page3() {
-  return (
-    // <FlexBoxGrid />
-    <Main />
-    // <MyGrid />
-  );
+export default function MainPage() {
+  return <Main />;
 }
 
 function Main() {
   const { data, isFetching, refetch, isRefetching, error, isError } =
     useGetAllWeightEntries();
+  const testobj = data?.weightentries[0];
+  try {
+    console.log(
+      format(data?.weightentries[0].recorded, "EEEE MMM do, yyyy @ HH:mm a")
+
+      // testobj
+    );
+  } catch (err) {
+    console.log(err);
+  }
+
   const {
     user,
     isFetching: isLoggingIn,
@@ -137,10 +103,6 @@ function Main() {
     isError: isLoginError,
     isAuthenticated,
   } = useCheckLogin();
-
-  // const { testFunc } = useModalContext();
-  // testFunc();
-  // {Array.from({ length: 10 }).map((_, index) => ())}
 
   return (
     <Box
@@ -163,60 +125,38 @@ function Main() {
         boxSizing={"border-box"}
         justifyContent={"space-between"}
       >
+        {/* <Spacer /> */}
         <LinkBox
-        // backgroundImage="/banner1.png"
         // flexGrow={1}
-        // display={"flex"}
-        // gap={1}
-        // border={"1px solid black"}
-        // p={1}
-        // borderRadius={"lg"}
-        // bg={"teal.100"}
-        // _hover={{ background: "blackAlpha.200", color: "teal.300" }}
-        // mt={-5}
-        // p={0}
+        // backgroundImage={"/static/banner3.png"}
+        // backgroundRepeat={"no-repeat"}
         >
           <LinkOverlay href="/" p={0}>
-            {/* <IconButton
-              aria-label="homebutton"
-              isRound
-              boxSize={"3em"}
-              icon={
-                <Image
-                  // boxSize="3em"
-                  src="/icon.png"
-                />
-              }
-            /> */}
-            <Image
-              // bg={"blue.200"}
-              src="/static/banner4.png"
-              // objectFit="cover"
-              h="50px"
-            />
+            <Box position="relative">
+              <Image src="/static/banner3.png" h="50px" />
+              <Heading
+                position="absolute"
+                top="0"
+                left="0"
+                right="0"
+                bottom="0"
+                zIndex="10"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                // textShadow={"1px 1px #049cfb"}
+                style={{
+                  // WebkitTextStroke: "1px black", // for Chrome and Safari
+                  WebkitTextFillColor: "white",
+                  textShadow:
+                    "-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000",
+                }}
+              >
+                Weight Tracking
+              </Heading>
+            </Box>
           </LinkOverlay>
-          {/* <Heading>Weight Tracking</Heading> */}
-          {/* <Text my={"auto"} pe={2}>
-            <Highlight
-              query={"Home"}
-              styles={{
-                px: "2",
-                pt: "0",
-                rounded: "full",
-                bg: "teal.300",
-                outline: "1px solid black",
-                fontSize: "2xl",
-                color: "white",
-                fontWeight: "semibold",
-                _hover: { background: "blackAlpha.200", color: "teal.300" },
-              }}
-            >
-              Home
-            </Highlight>
-          </Text> */}
         </LinkBox>
-
-        {/* <Spacer /> */}
 
         <ButtonGroup>
           <DrawerMenu />
@@ -226,8 +166,6 @@ function Main() {
         <Grid
           border={"1px solid gray"}
           borderRadius={"lg"}
-          // h={"40vh"}
-          // overflowY={"scroll"}
           w={"100vw"}
           gridTemplateColumns={{ base: "1fr", lg: "repeat(2,1fr)" }}
           gridGap={2}
@@ -240,14 +178,20 @@ function Main() {
           // overflowY={["scroll", "auto"]}
           boxSizing={"border-box"}
         >
-          {data &&
-            !isFetching &&
-            !isRefetching &&
+          {data && !isFetching && !isRefetching ? (
             data.weightentries.map((entry) => (
               <GridItem key={entry.id}>
                 <DisplayData data={entry} />
               </GridItem>
-            ))}
+            ))
+          ) : (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          )}
         </Grid>
       </Box>
       <Box
@@ -295,9 +239,6 @@ function Paginator({
   const page = Number(searchParams.get("page")) || 1;
 
   function handleClick(value) {
-    console.log("handleCLickVal", value);
-    console.log("handleCLickPage", page);
-    // console.log("handleCLickVal+Page", page + value);
     if (value === "+") {
       searchParams.set("page", page + 1);
     } else {
@@ -308,8 +249,6 @@ function Paginator({
   }
 
   function handleChange(value) {
-    console.log("handleCHange", +value);
-    console.log("handleCHange", typeof value);
     if (+value <= totalPages && +value >= 1) {
       searchParams.set("page", value);
     } else {
@@ -453,12 +392,7 @@ function Paginator({
   );
 }
 
-export function DisplayData({
-  data,
-  showButtons = true,
-  setModalData,
-  setIsModalOpen,
-}) {
+export function DisplayData({ data }) {
   const { user, isFetching, error, isError, isAuthenticated } = useCheckLogin();
   if (!data) return;
   // console.log(format(data.recorded, "EEEE MMM do, yyyy @ HH:mm a"));
@@ -656,17 +590,7 @@ export function DisplayData({
             // </Box>
           )} */}
         </CardBody>
-        {showButtons && (
-          <CardFooter>
-            {/* <ButtonGroup border={"1px solid gray"} borderRadius={4} p={2}>
-              <EditWeightEntryModal data={data} isDisabled={!isAuthenticated} />
-              <DeleteWeightEntryModal
-                data={data}
-                isDisabled={!isAuthenticated}
-              />
-            </ButtonGroup> */}
-          </CardFooter>
-        )}
+        <CardFooter></CardFooter>
       </Card>
     </>
   );

@@ -31,7 +31,7 @@ import {
   IconButton,
   Image,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { LoginForm } from "./Form";
 import { useCheckLogin } from "../hooks/useAuthentication";
 import { getSession, whoAmI } from "../api/ApiFunctions";
@@ -40,7 +40,7 @@ import { herokuUrls } from "../api/ApiUrls";
 
 export default function DrawerMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
+  const btnRef = useRef();
   const {
     user,
     isFetching,
@@ -51,32 +51,9 @@ export default function DrawerMenu() {
     refetch,
   } = useCheckLogin();
 
-  // console.log("user?", user);
-  // console.log("isAuth?", isAuthenticated);
-  const checkLoginUrl = "http://10.0.0.155:8000/api/checklogin";
   const toast = useToast();
 
   const checkAuthUrl = "http://localhost:8000/api/check-auth/";
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch(checkAuthUrl, {
-        credentials: "include", // Ensure cookies are sent
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Authentication status:", data);
-        return data.is_authenticated;
-      } else {
-        console.error("Error checking authentication status");
-        return false;
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-      return false;
-    }
-  };
-  const logoutApiUrl = "http://10.0.0.155:8000/api/logout";
 
   async function logoutApi() {
     const response = await fetch(herokuUrls.logout, {
@@ -99,18 +76,6 @@ export default function DrawerMenu() {
     });
   }
 
-  // useEffect(() => {
-  //   checkAuthStatus().then((isAuthenticated) => {
-  //     if (isAuthenticated) {
-  //       console.log("User is logged in");
-  //       // Perform actions for logged-in user
-  //     } else {
-  //       console.log("User is not logged in");
-  //       // Redirect to login page or show login form
-  //     }
-  //   });
-  // }, []);
-
   useEffect(() => {
     if (isAuthenticated) {
       console.log("User is logged in");
@@ -121,12 +86,8 @@ export default function DrawerMenu() {
     }
   }, [isAuthenticated]);
 
-  // const { data, isFetching, error, isError } = useCheckLogin();
   return (
     <>
-      {/* <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-        Open
-      </Button> */}
       <IconButton
         onClick={onOpen}
         ref={btnRef}
@@ -164,10 +125,8 @@ export default function DrawerMenu() {
           <DrawerFooter>
             <ButtonGroup>
               <Button variant="outline" onClick={onClose}>
-                Cancel
+                Close
               </Button>
-              {/* <Button onClick={getSession}>Session</Button>
-              <Button onClick={whoAmI}>whoAmI</Button> */}
 
               {isAuthenticated && (
                 <Button

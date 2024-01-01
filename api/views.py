@@ -93,10 +93,10 @@ class ApiCheckLoginView(View):
         """GET request"""
         # Check if the user is authenticated
 
-        session_value = request.session.get("my_session")
+        # session_value = request.session.get("my_session")
 
-        print(request.user)
-        print("Session Items: ", request.session.items())
+        # print(request.user)
+        # print("Session Items: ", request.session.items())
 
         if request.user.is_authenticated:
             # The user is logged in
@@ -122,11 +122,11 @@ class ApiLoginView(View):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
-        user_dict = model_to_dict(user)
 
         if user is not None:
             # Log the user in
             login(request, user)
+            user_dict = model_to_dict(user)
 
             # Save the session data manually
             request.session.save()
@@ -136,7 +136,7 @@ class ApiLoginView(View):
             if request.user.is_authenticated:
                 print("Authenticated...")
                 print(request.user)
-                print("Session Items: ", request.session.items())
+                # print("Session Items: ", request.session.items())
 
             # Return a JSON response
             return JsonResponse({'message': 'Logged in successfully', "user": user_dict, "session_value": session_value}, status=200)
@@ -174,7 +174,7 @@ class ApiLoginView(View):
 #             return JsonResponse({'message': 'Invalid username or password'}, status=401)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, login_required], name='dispatch')
 class ApiWeightEntryDeleteView(View):
     """Delete a weight entry"""
 
@@ -200,7 +200,7 @@ class ApiWeightEntryDeleteView(View):
         return JsonResponse({'message': 'WeightEntry deleted successfully'}, status=200)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, login_required], name='dispatch')
 class ApiWeightEntryAddView(View):
     """Add a weight entry"""
 
@@ -226,7 +226,7 @@ class ApiWeightEntryAddView(View):
         return JsonResponse({'message': 'WeightEntry added successfully', 'id': weight_entry.id}, status=201)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, login_required], name='dispatch')
 class ApiWeightEntryUpdateViewWithObject(View):
     """Update a specific weight entry"""
 
@@ -289,28 +289,40 @@ class ApiWeightEntryListView(View):
 
     def get(self, request, *args, **kwargs):
         """GET request"""
-        weightentries = WeightEntry.objects.all().select_related("user"
-                                                                 ).annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+        user = request.user
+        print(request.user)
+        print(type(request.user.id))
+        # print(model_to_dict(request.user))
+
+        weightentries = WeightEntry.objects.all().select_related("user").annotate(
+            username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+
+        # weight entries for the logged in user
+        weight_entries_from_user = WeightEntry.objects.filter(
+            user_id=user.id).select_related("user").annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
 
         # Create a Paginator object
         # Show 10 weight entries per page
         paginator = Paginator(weightentries, 10)
+        paginator_user = Paginator(weight_entries_from_user, 10)
 
         # Get the page number from the query params
         page_number = request.GET.get('page')
 
         # Get the objects for the requested page
         page_obj = paginator.get_page(page_number)
+        page_obj_user = paginator_user.get_page(page_number)
 
         # Convert the page objects to a list
         weightentries_page = list(page_obj)
+        weightentries_user_page = list(page_obj_user)
 
         # Get the total number of pages
         total_pages = paginator.num_pages
         total_entries = paginator.count
 
         # return JsonResponse(weightentries_page, safe=False)
-        return JsonResponse({'weightentries': weightentries_page, 'total_pages': total_pages, 'total_entries': total_entries}, safe=False)
+        return JsonResponse({'weightentries': weightentries_page, 'total_pages': total_pages, 'total_entries': total_entries, "weight_entries_from_user": weightentries_user_page}, safe=False)
 
 
 # class ApiWeightEntryListViewNonPaginated(View):

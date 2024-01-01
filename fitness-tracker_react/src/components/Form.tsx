@@ -60,7 +60,7 @@ import {
 import { useEffect, useState } from "react";
 import DrawerMenu from "./Drawer";
 import AlertItem from "./Alert";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { format } from "date-fns";
 import {
   useAddWeightEntry,
@@ -423,46 +423,49 @@ export function TestForm() {
 }
 
 export function LoginForm() {
-  const { register, handleSubmit, reset, getValues, formState } = useForm();
-  const { errors } = formState;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState,
+    setError: setFormError,
+    clearErrors,
+  } = useForm();
+  const { errors, isValid } = formState;
 
   const { login, isLoggingIn } = useLogin();
-  const loginApiUrl = "http://127.0.0.1:8000/api/login";
-
-  const loginApi = async (username, password) => {
-    try {
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-        credentials: "include", // Ensure cookies are sent
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data.message);
-        // Handle successful login here
-      } else {
-        console.error(data.message);
-        // Handle login error here
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-      // Handle network error here
-    }
-  };
 
   function handleLogin() {
     const [username, password] = getValues(["username", "password"]);
-    login({ username, password });
+    login(
+      { username, password },
+      {
+        onError: (err) => {
+          if (err.message.includes("401")) {
+            setFormError("server", {
+              type: "manual",
+              message: "Wrong username, or password",
+            });
+          }
+        },
+      }
+    );
+
     // loginApi(username, password);
   }
 
+  useEffect(() => {
+    // if (errors.username || errors.password || errors.server) {
+    //   console.log(errors);
+    // }
+    console.log(errors);
+  }, [errors]);
+
+  function handleClearErrors() {
+    clearErrors();
+    // setErrMsg("");
+  }
   return (
     <Box
       as="form"
@@ -475,16 +478,30 @@ export function LoginForm() {
         <Text>Username</Text>
         <Input
           // type="number"
-          placeholder="Username"
+          isInvalid={errors.server || errors.username}
+          // isInvalid={error}
+          onClick={handleClearErrors}
+          placeholder={
+            errors?.username?.message
+              ? `${errors.username.message}`
+              : "Enter username"
+          }
           {...register("username", { required: "This field is required" })}
         />
+        {/* {errors?.username?.message && <Text>{`${errors.username.message}`}</Text>} */}
       </Box>
 
       <Box>
         <Text>Password</Text>
         <Input
+          isInvalid={errors.server || errors.username}
           type="password"
-          placeholder="Password"
+          placeholder={
+            errors?.password?.message
+              ? `${errors.password.message}`
+              : "Enter password"
+          }
+          onClick={handleClearErrors}
           {...register("password", { required: "This field is required" })}
           // defaultValue={formData.recorded}
         />
@@ -492,6 +509,8 @@ export function LoginForm() {
       <Button type="submit" colorScheme={"teal"}>
         Login
       </Button>
+      {errors?.server?.message && <Text>{`${errors.server.message}`}</Text>}
+      {/* {errors?.username?.message && <Text>{`${errors.username.message}`}</Text>} */}
     </Box>
   );
 }

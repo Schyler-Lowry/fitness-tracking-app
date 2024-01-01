@@ -45,7 +45,7 @@ import {
   BsTrash,
   BsTrashFill,
 } from "react-icons/bs";
-import { DisplayData } from "./Page3";
+import { DisplayData } from "./MainPage";
 import DeleteWeightEntryCard from "./DeleteWeightEntryCard";
 
 export function ModalUi({

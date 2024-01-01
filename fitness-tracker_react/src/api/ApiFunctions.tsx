@@ -12,7 +12,13 @@ export async function getAllEntriesApi(page: string) {
   // console.log("apiGetAllEntries page:", page);
   // console.log("apiGetAllEntries url:", entriesUrl);
 
-  const response = await fetch(entriesUrl);
+  const response = await fetch(entriesUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -98,6 +104,7 @@ export async function loginApi(credentials = {}) {
   const data = await response.json();
 
   if (!response.ok) {
+    // console.log(data);
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
