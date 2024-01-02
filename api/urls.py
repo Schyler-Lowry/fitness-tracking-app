@@ -12,10 +12,7 @@ from .views import (
     check_auth_status,
     ApiLogoutView,
     ApiWeightEntryDeleteView,
-    login_view,
-    logout_view,
-    session_view,
-    whoami_view
+    ApiWeightEntriesFromDays
 )
 
 urlpatterns = [
@@ -65,6 +62,11 @@ urlpatterns = [
         "entries/delete",
         ApiWeightEntryDeleteView.as_view(),
         name="api_weight_entry_delete",
+    ),
+    path(
+        "entries/from",
+        ApiWeightEntriesFromDays.as_view(),
+        name="api_weight_entries_from_days",
     ),
     # path("login-view/", login_view, name="api_login_view"),
     # path("logout-view/", logout_view, name="api_logout_view"),

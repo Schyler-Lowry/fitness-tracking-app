@@ -3,14 +3,7 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 export async function getAllEntriesApi(page: string) {
-  //   const nonPaginatedUrl = `http://localhost:8000/api/entries/list/?page=1`;
-  // const entriesUrl = `http://127.0.0.1:8000/api/entries/list/?page=${page}`;
-  // const entriesUrl = `http://10.0.0.155:8000/api/entries/list/?page=${page}`;
-  // const entriesUrl = `https://weight-tracking-app-a9db95db2d03.herokuapp.com/api/entries/list/?page=${page}`;
   const entriesUrl = herokuUrls.entries + `?page=${page}`;
-
-  // console.log("apiGetAllEntries page:", page);
-  // console.log("apiGetAllEntries url:", entriesUrl);
 
   const response = await fetch(entriesUrl, {
     method: "GET",
@@ -24,12 +17,24 @@ export async function getAllEntriesApi(page: string) {
   }
   const data = await response.json();
   return data;
-  // setFetchedEntry(data);
-  // console.log(data);
 }
 
-// const editUrl = "http://localhost:8000/api/entries/edit";
-const editUrl = "http://10.0.0.155:8000/api/entries/edit";
+export async function getAllEntriesByDaysApi(days: string | number) {
+  const entriesUrl = herokuUrls.fromdays + `?days=${days}`;
+
+  const response = await fetch(entriesUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
 
 export async function editWeightEntryApi(data = {}) {
   const response = await fetch(herokuUrls.edit, {

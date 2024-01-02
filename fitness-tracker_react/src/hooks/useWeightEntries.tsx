@@ -10,6 +10,7 @@ import {
   deleteWeightEntryApi,
   getCookie,
   addWeightEntryApi,
+  getAllEntriesByDaysApi,
 } from "../api/ApiFunctions";
 import { useSearchParams } from "react-router-dom";
 
@@ -22,6 +23,20 @@ export function useGetAllWeightEntries() {
   const { data, isFetching, refetch, error, isError, isRefetching } = useQuery({
     queryKey: ["entries", page],
     queryFn: () => getAllEntriesApi(page),
+  });
+
+  return { data, isFetching, refetch, error, isError, isRefetching };
+}
+
+export function useGetWeightEntriesToDate() {
+  const queryClient = useQueryClient();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  // const currentPage = searchParams.get()
+  const days = searchParams.get("days") || "30";
+  const { data, isFetching, refetch, error, isError, isRefetching } = useQuery({
+    queryKey: ["entriesFromDays", days],
+    queryFn: () => getAllEntriesByDaysApi(days),
   });
 
   return { data, isFetching, refetch, error, isError, isRefetching };

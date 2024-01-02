@@ -30,6 +30,14 @@ import {
   ButtonGroup,
   IconButton,
   Image,
+  Select,
+  Flex,
+  Checkbox,
+  Tooltip,
+  Card,
+  CardHeader,
+  CardBody,
+  Spacer,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
 import { LoginForm } from "./Form";
@@ -37,6 +45,9 @@ import { useCheckLogin } from "../hooks/useAuthentication";
 import { getSession, whoAmI } from "../api/ApiFunctions";
 import { useAuthentication } from "../context/AuthenticationContext";
 import { herokuUrls } from "../api/ApiUrls";
+import { useColorsScheme } from "../context/ColorsContext";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function DrawerMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -114,12 +125,28 @@ export default function DrawerMenu() {
             {!isAuthenticated ? (
               "Login"
             ) : (
-              <LoggedInUserInfoDisplay user={user} />
+              <>
+                <LoggedInUserInfoDisplay user={user} />
+              </>
             )}
           </DrawerHeader>
 
           <DrawerBody>
-            {!isAuthenticated ? <LoginForm /> : <Text>Stuff will go here</Text>}
+            {!isAuthenticated ? (
+              <LoginForm />
+            ) : (
+              <>
+                <Flex
+                  flexDir="column"
+                  gap={10}
+                  // alignContent={"stretch"}
+                  // justifyContent={"space-between"}
+                >
+                  <NavButtons onClose={onClose} />
+                  <SelectColorScheme />
+                </Flex>
+              </>
+            )}
           </DrawerBody>
 
           <DrawerFooter>
@@ -151,5 +178,101 @@ function LoggedInUserInfoDisplay({ user }) {
     <Box>
       <Heading size={"md"}>Hello, {user.username}</Heading>
     </Box>
+  );
+}
+
+function SelectColorScheme() {
+  const {
+    colorSchemes,
+    appColorScheme,
+    setAppColorScheme,
+    prefersRandom,
+    setPrefersRandom,
+  } = useColorsScheme();
+
+  const getKeyByValue = (object: Record<string, string>, value: string) => {
+    return Object.keys(object).find((key) => object[key] === value);
+  };
+
+  // console.log(getKeyByValue(colorSchemes, appColorScheme));
+
+  // const colorSchemeNamesHumanReadable = colorSchemes.map(colorScheme => {})
+
+  // const colorSchemeKey = getKeyByValue(colorSchemes, appColorScheme);
+
+  function handleChange(e) {
+    const index = +e.target.value;
+    console.log(colorSchemes.at(index));
+    setAppColorScheme(colorSchemes.at(index));
+  }
+
+  return (
+    <Flex flexDir={"column"}>
+      <Text>Change Color Scheme:</Text>
+
+      <Select
+        placeholder={`Current Scheme: ${appColorScheme.schemeName}`}
+        onChange={handleChange}
+        // bgGradient={appColorScheme.value}
+        variant={"filled"}
+      >
+        {colorSchemes.map((colorScheme, index) => (
+          <option key={colorScheme.schemeName} value={index}>
+            {colorScheme.schemeName}
+          </option>
+        ))}
+      </Select>
+      <Flex gap={1}>
+        <Box my={["auto", -1]}>
+          <Tooltip label="When checked, a random color scheme will be applied when the page loads">
+            <IconButton
+              // mt={-1.5}
+              px={0}
+              aria-label="tooltip"
+              size={"xs"}
+              // background={"red.200"}
+              background={"none"}
+              isRound
+              icon={<QuestionOutlineIcon boxSize={3} />}
+            />
+          </Tooltip>
+        </Box>
+        <Text>Prefers Random Color Scheme</Text>
+
+        <Checkbox
+          value={prefersRandom}
+          isChecked={prefersRandom}
+          onChange={() => setPrefersRandom((random) => !random)}
+        />
+      </Flex>
+    </Flex>
+  );
+}
+
+function NavButtons({ onClose }) {
+  const navigate = useNavigate();
+
+  return (
+    <Card size={"sm"} variant={"elevated"}>
+      <CardHeader>
+        <Heading color={"purple.500"} size={"md"}>
+          Links
+        </Heading>
+      </CardHeader>
+      <CardBody>
+        <NavLink to="/static/graph">
+          <Box
+            _hover={{ background: "gray.100" }}
+            borderRadius={"md"}
+            p={1}
+            onClick={onClose}
+            textDecoration={"underline"}
+            // color={"purple.400"}
+          >
+            Entries on Chart
+          </Box>
+        </NavLink>
+      </CardBody>
+    </Card>
   );
 }

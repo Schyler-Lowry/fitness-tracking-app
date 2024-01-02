@@ -8,7 +8,8 @@ import json
 from django.contrib.auth import authenticate, login, logout, user_logged_in
 from django.contrib.sessions.backends.db import SessionStore
 from django.views.decorators.http import require_POST
-
+from django.utils import timezone
+from datetime import timedelta
 from fitness.models import WeightEntry
 from accounts.models import CustomUser
 from django.db.models import F
@@ -17,9 +18,27 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 
 
+class ApiWeightEntriesFromDays(View):
+    """List of weight entries from days ago"""
+
+    def get(self, request, *args, **kwargs):
+        """GET request"""
+        user = request.user
+        # data = json.loads(request.body)
+
+        days = int(request.GET.get("days"))
+        date_n_days_ago = timezone.now() - timedelta(days=days)
+
+        weight_entries_from_user = WeightEntry.objects.filter(
+            user_id=user.id,
+            recorded__gte=date_n_days_ago  # only include entries from the last `n` days
+        ).select_related("user").annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+
+        return JsonResponse({'weightentries': list(weight_entries_from_user)}, safe=False)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 def login_view(request):
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     data = json.loads(request.body)
     username = data.get('username')
     password = data.get('password')
@@ -205,7 +224,7 @@ class ApiWeightEntryAddView(View):
     """Add a weight entry"""
 
     def post(self, request, *args, **kwargs):
-        print("Received CSRF token: ", request.META.get('HTTP_X_CSRFTOKEN'))
+        # print("Received CSRF token: ", request.META.get('HTTP_X_CSRFTOKEN'))
         """POST request"""
         # Parse the JSON data from the request body
         data = json.loads(request.body)

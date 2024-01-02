@@ -57,7 +57,7 @@ import {
   MenuItem,
   MenuDivider,
 } from "@chakra-ui/react";
-
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import { useContext, useEffect, useState } from "react";
 import DrawerMenu from "./Drawer";
 import AlertItem from "./Alert";
@@ -74,9 +74,8 @@ import { useSearchParams } from "react-router-dom";
 import { BsClock } from "react-icons/bs";
 import { HiDotsVertical } from "react-icons/hi";
 
-import { QuestionOutlineIcon } from "@chakra-ui/icons";
-
 import SkeletonCard from "./SkeletonCard";
+import { useColorsScheme } from "../context/ColorsContext";
 
 export default function MainPage() {
   return <Main />;
@@ -85,16 +84,6 @@ export default function MainPage() {
 function Main() {
   const { data, isFetching, refetch, isRefetching, error, isError } =
     useGetAllWeightEntries();
-  const testobj = data?.weightentries[0];
-  try {
-    console.log(
-      format(data?.weightentries[0].recorded, "EEEE MMM do, yyyy @ HH:mm a")
-
-      // testobj
-    );
-  } catch (err) {
-    console.log(err);
-  }
 
   const {
     user,
@@ -105,12 +94,85 @@ function Main() {
   } = useCheckLogin();
 
   return (
+    <Box display={"flex"} boxSizing={"border-box"} flexDir={"column"}>
+      <Grid
+        border={"1px solid gray"}
+        borderRadius={"lg"}
+        w={"auto"}
+        gridTemplateColumns={{ base: "1fr", lg: "repeat(2,1fr)" }}
+        gridGap={2}
+        p={2}
+        // h={"60vh"}
+        h={["350px", "60vh"]}
+        // bg={"gray.300"}
+        bgGradient={"radial( gray.600,gray.200)"}
+        overflowY={"scroll"}
+        // overflowY={["scroll", "auto"]}
+        boxSizing={"border-box"}
+      >
+        {data && !isFetching && !isRefetching ? (
+          data.weightentries.map((entry) => (
+            <GridItem key={entry.id}>
+              <DisplayData data={entry} />
+            </GridItem>
+          ))
+        ) : (
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        )}
+      </Grid>
+      <Box
+        my={2}
+        display="flex"
+        // bg={"gray.500"}
+        // alignContent={"stretch"}
+        justifyContent={"center"}
+      >
+        {/* <Hide above="sm"> */}
+        <Box display={"flex"} flexDir={"column"} h={"30vh"} gap={4}>
+          {isFetching ? (
+            <Spinner size={"xl"} />
+          ) : isError ? (
+            <AlertItem message={error?.message} />
+          ) : (
+            <>
+              <Paginator
+                totalPages={data?.total_pages || 10}
+                totalEntries={data.total_entries}
+              />
+              <AddWeightEntryModal isDisabled={!isAuthenticated} />
+            </>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+function MainOld() {
+  const { data, isFetching, refetch, isRefetching, error, isError } =
+    useGetAllWeightEntries();
+
+  const {
+    user,
+    isFetching: isLoggingIn,
+    error: loginError,
+    isError: isLoginError,
+    isAuthenticated,
+  } = useCheckLogin();
+
+  const { appColorScheme } = useColorsScheme();
+  return (
     <Box
       // bg={"gray.200"}
       // bgGradient={
       //   "repeating-linear(180deg,teal.200,teal.900, teal.200, teal.900)"
       // }
-      bgGradient={"repeating-radial(gray.200, gray.400)"}
+      bgGradient={appColorScheme.value}
       w={"100vw"}
       p={4}
       h={"100vh"}
