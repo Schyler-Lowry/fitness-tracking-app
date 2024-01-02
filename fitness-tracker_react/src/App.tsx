@@ -15,10 +15,10 @@ function App() {
             <Route element={<GraphPage />} path="graph" />
           </Route>
           {/* <Route element={<MainPage />} path="static" /> */}
-          <Route element={<AppLayout />} path="static">
+          {/* <Route element={<AppLayout />} path="static">
             <Route element={<MainPage />} index />
             <Route element={<GraphPage />} path="graph" />
-          </Route>
+          </Route> */}
         </Routes>
       </ColorsProvider>
     </BrowserRouter>

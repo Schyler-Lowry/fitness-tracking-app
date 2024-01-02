@@ -260,7 +260,7 @@ function NavButtons({ onClose }) {
         </Heading>
       </CardHeader>
       <CardBody>
-        <NavLink to="/static/graph">
+        <NavLink to="/graph">
           <Box
             _hover={{ background: "gray.100" }}
             borderRadius={"md"}

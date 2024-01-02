@@ -179,7 +179,7 @@ function ApexChart() {
 
   if (isFetching) return <Spinner />;
 
-  const entriesMapped = sampleEntries
+  const entriesMapped = data.weightentries
     .map((entry) => {
       //   const parsed = parseISO(entry.recorded);
 
