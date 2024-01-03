@@ -11,21 +11,50 @@ import {
   getCookie,
   addWeightEntryApi,
   getAllEntriesByDaysApi,
+  getAllEntriesByPageApi,
 } from "../api/ApiFunctions";
 import { useSearchParams } from "react-router-dom";
+
+export function useGetAllWeightEntriesByPage() {
+  const queryClient = useQueryClient();
+
+  // const currentPage = searchParams.get()
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") || "1";
+  const { data, isFetching, refetch, error, isError, isRefetching } = useQuery({
+    queryKey: ["entries", page],
+    queryFn: () => getAllEntriesByPageApi(page),
+  });
+
+  return { data, isFetching, refetch, error, isError, isRefetching };
+}
 
 export function useGetAllWeightEntries() {
   const queryClient = useQueryClient();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  // const currentPage = searchParams.get()
-  const page = searchParams.get("page") || "1";
-  const { data, isFetching, refetch, error, isError, isRefetching } = useQuery({
-    queryKey: ["entries", page],
-    queryFn: () => getAllEntriesApi(page),
+  const days = searchParams.get("days") || null;
+  const {
+    data: allEntries,
+    isFetching: isFetchingAllEntries,
+    refetch: refetchAllEntries,
+    error: allEntriesError,
+    isError: isAllEntriesError,
+    isRefetching: isRefetchingAllEntries,
+  } = useQuery({
+    queryKey: ["all_entries"],
+    queryFn: getAllEntriesApi,
+    // enabled: days === "all",
   });
 
-  return { data, isFetching, refetch, error, isError, isRefetching };
+  return {
+    allEntries,
+    isFetchingAllEntries,
+    refetchAllEntries,
+    allEntriesError,
+    isAllEntriesError,
+    isRefetchingAllEntries,
+  };
 }
 
 export function useGetWeightEntriesToDate() {
@@ -34,9 +63,12 @@ export function useGetWeightEntriesToDate() {
   const [searchParams, setSearchParams] = useSearchParams();
   // const currentPage = searchParams.get()
   const days = searchParams.get("days") || "30";
+  console.log("days", days);
   const { data, isFetching, refetch, error, isError, isRefetching } = useQuery({
     queryKey: ["entriesFromDays", days],
     queryFn: () => getAllEntriesByDaysApi(days),
+    // enabled: days === "30" || days === "60" || days === "90",
+    // enabled: 2 < 1,
   });
 
   return { data, isFetching, refetch, error, isError, isRefetching };

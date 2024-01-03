@@ -10,6 +10,7 @@ const djangoUrl = "http://10.0.0.155:8000/api/";
 const herokuUrl = "https://weight-tracking-app-a9db95db2d03.herokuapp.com/api/";
 export const herokuUrls = {
   entries: herokuUrl + "entries/list/",
+  all_entries: herokuUrl + "entries/list/all",
   add: herokuUrl + "entries/add",
   edit: herokuUrl + "entries/edit",
   delete: herokuUrl + "entries/delete",
@@ -21,6 +22,7 @@ export const herokuUrls = {
 };
 // export const herokuUrls = {
 //   entries: djangoUrl + "entries/list/",
+//   all_entries: djangoUrl + "entries/list/all",
 //   add: djangoUrl + "entries/add",
 //   edit: djangoUrl + "entries/edit",
 //   delete: djangoUrl + "entries/delete",

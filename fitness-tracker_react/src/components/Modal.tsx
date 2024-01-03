@@ -33,7 +33,7 @@ import React, { createContext, useContext, useState } from "react";
 import { AddWeightEntryForm, EditWeightEntryForm } from "./Form";
 import {
   useEditWeightEntry,
-  useGetAllWeightEntries,
+  useGetAllWeightEntriesByPage,
 } from "../hooks/useWeightEntries";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
@@ -112,7 +112,7 @@ export function ModalUi() {
   // const { myClose } = useModalContext();
   //   console.log(typeof format(new Date(), "yyyy-MM-dd hh:mm"));
 
-  const { refetch } = useGetAllWeightEntries();
+  const { refetch } = useGetAllWeightEntriesByPage();
 
   const { editWeightEntry, isPending, error, isError } = useEditWeightEntry();
 

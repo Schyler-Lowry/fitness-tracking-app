@@ -76,54 +76,57 @@ import {
   useGetAllWeightEntries,
   useGetWeightEntriesToDate,
 } from "../hooks/useWeightEntries";
-import { format, parseISO } from "date-fns";
+import {
+  differenceInDays,
+  differenceInMilliseconds,
+  format,
+  parseISO,
+} from "date-fns";
 import { sampleEntries } from "./SampleEntries";
 import Chart from "react-apexcharts";
 import { useSearchParams } from "react-router-dom";
 
 export default function GraphPage() {
-  //   const { data, isFetching, refetch, isRefetching, error, isError } =
-  //     useGetAllWeightEntries();
-
-  //   if (isFetching) return <Spinner />;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queriedDays = searchParams.get("days") || "30";
 
   return (
-    <Box bg={"gray.200"}>
-      <Flex mx={4} mt={3} justifyContent={"space-between"}>
-        <Heading>
-          <Text>Chart</Text>
+    <Box bg={"gray.200"} borderRadius={"lg"}>
+      <Flex
+        ms={[4, 0]}
+        me={[4, 4]}
+        mt={3}
+        justifyContent={"space-between"}
+        flexDir={["column", "row"]}
+        gap={[1, 0]}
+      >
+        <Heading
+          mx={"auto"}
+          fontSize={["medium", "x-large"]}
+          style={{
+            // WebkitTextStroke: "1px black", // for Chrome and Safari
+            WebkitTextFillColor: "white",
+            textShadow:
+              "-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000",
+          }}
+        >
+          {queriedDays === "all"
+            ? "Showing all recorded entries"
+            : `Showing entries in the last ${queriedDays} days`}
         </Heading>
         <DaysFilter />
       </Flex>
-      <ApexChart />
+      <Box mx={4} mt={4}>
+        <ApexChart />
+      </Box>
     </Box>
   );
 }
 
-// function ScatterChart({ data }) {
-//   return (
-//     <ScatterChart
-//     //   style={{ backgroundColor: "white" }}
-//     //   margin={{
-//     //     top: 20,
-//     //     right: 20,
-//     //     bottom: 10,
-//     //     left: 10,
-//     //   }}
-//     >
-//       <XAxis dataKey={"day"} type="number" name="day" />
-//       <YAxis dataKey={"weight"} type="number" name="weight" />
-//       <ZAxis dataKey="id" type="number" range={[95, 125]} name="id" />
-//       <CartesianGrid strokeDasharray={"3 3"} />
-//       <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-//       <Legend />
-//       <Scatter data={data.entries} name="Test" fill="#8884d8" />
-//     </ScatterChart>
-//   );
-// }
-
 function DaysFilter() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const queriedDays = searchParams.get("days") || "30";
+  console.log(queriedDays);
 
   function handleClick(e) {
     const value = e.target.value;
@@ -133,37 +136,43 @@ function DaysFilter() {
   }
 
   return (
-    <ButtonGroup isAttached>
+    <ButtonGroup
+      isAttached
+      colorScheme="teal"
+      variant={"outline"}
+      // size={"sm"}
+      // flexGrow={1}
+      display={"flex"}
+    >
       <Button
-        border={"1px"}
-        borderColor={"gray.900"}
+        isDisabled={queriedDays === "30"}
         value={30}
         onClick={(e) => handleClick(e)}
+        flexGrow={1}
       >
         30
       </Button>
       <Button
-        border={"1px"}
-        borderColor={"gray.900"}
+        isDisabled={queriedDays === "60"}
         value={60}
         onClick={(e) => handleClick(e)}
+        flexGrow={1}
       >
         60
       </Button>
       <Button
-        border={"1px"}
-        borderColor={"gray.900"}
+        isDisabled={queriedDays === "90"}
         value={90}
         onClick={(e) => handleClick(e)}
+        flexGrow={1}
       >
         90
       </Button>
       <Button
-        isDisabled
-        border={"1px"}
-        borderColor={"gray.900"}
+        isDisabled={queriedDays === "all"}
         value={"all"}
         onClick={(e) => handleClick(e)}
+        flexGrow={1}
       >
         All
       </Button>
@@ -174,11 +183,22 @@ function DaysFilter() {
 function ApexChart() {
   const { data, isFetching, refetch, isRefetching, error, isError } =
     useGetWeightEntriesToDate();
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const days = searchParams.get("days") || 30;
+  const queriedDays = searchParams.get("days") || 30;
 
   if (isFetching) return <Spinner />;
+  const days =
+    queriedDays === "all"
+      ? Math.abs(
+          differenceInDays(
+            new Date(data.weightentries.at(1).recorded),
+            new Date()
+          )
+        )
+      : +queriedDays;
 
+  // const entriesMapped = sampleEntries
   const entriesMapped = data.weightentries
     .map((entry) => {
       //   const parsed = parseISO(entry.recorded);
@@ -188,14 +208,45 @@ function ApexChart() {
       return [new Date(entry.recorded).getTime(), entry.weight];
     })
     .reverse();
-  //   console.log(entriesMapped);
-  //   console.log(new Date(sampleEntries[0].recorded).getTime());
+  // //   console.log(entriesMapped);
+  // //   console.log(new Date(sampleEntries[0].recorded).getTime());
 
   const apexChartStuff = {
     options: {
       chart: {
         id: "basic-line",
         type: "line",
+        background: "white",
+      },
+      stroke: {
+        show: true,
+        curve: "smooth",
+        lineCap: "butt",
+        colors: ["#0d857b"],
+        width: 2,
+        dashArray: 0,
+      },
+
+      markers: {
+        size: 1,
+        colors: undefined,
+        strokeColors: "#474545",
+        strokeWidth: 2,
+        strokeOpacity: 0.9,
+        strokeDashArray: 0,
+        fillOpacity: 1,
+        discrete: [],
+        shape: "circle",
+        radius: 2,
+        offsetX: 0,
+        offsetY: 0,
+        onClick: undefined,
+        onDblClick: undefined,
+        showNullDataPoints: true,
+        hover: {
+          size: undefined,
+          sizeOffset: 3,
+        },
       },
       xaxis: {
         // categories: ["Nov", "Dec", "Jan"],
@@ -221,21 +272,20 @@ function ApexChart() {
         title: {
           text: "Weight",
         },
-        min: 140,
+        min: 130,
         max: 170,
       },
     },
     dataLabels: false,
     series: [
       {
-        name: "series-1",
+        name: "Weight",
         // data: [30, 40, 45, 50, 49, 60, 70, 91],
         data: entriesMapped,
       },
     ],
   };
 
-  //   console.log(new Date("01 Nov 2023").getTime());
   return (
     <Chart
       //   type="line"
@@ -244,5 +294,6 @@ function ApexChart() {
       //   type="line"
       width="100%"
     />
+    // <Box>test</Box>
   );
 }

@@ -36,6 +36,24 @@ function ColorsProvider({ children }) {
       value:
         "repeating-linear(to-b, teal.300,blue.600, gray.200,teal.300,blue.600, gray.200, teal.300,blue.600, gray.200)",
     },
+    {
+      schemeName: "Darker Teal - to Bottom",
+      value: "linear(to-b, teal.300,teal.600)",
+    },
+    {
+      schemeName: "Darker Teal - to Top",
+      value: "linear(to-t, teal.300,teal.600)",
+    },
+    {
+      schemeName: "Pink Green Blue - Repeating Conic",
+      value:
+        "repeating-conic(from 45deg at 10% 50%, pink 0deg 10deg, green.200 10deg 20deg, blue.200 20deg 30deg)",
+    },
+    {
+      schemeName: "Teal Gray - Repeating Conic",
+      value:
+        "repeating-conic(from 45deg at 10% 50%, teal.200 0deg 10deg, gray.200 10deg 20deg, teal.600 20deg 30deg)",
+    },
   ];
 
   const [prefersRandom, setPrefersRandom] = useState(() => {

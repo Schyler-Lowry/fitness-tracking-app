@@ -12,7 +12,8 @@ from .views import (
     check_auth_status,
     ApiLogoutView,
     ApiWeightEntryDeleteView,
-    ApiWeightEntriesFromDays
+    ApiWeightEntriesFromDays,
+    ApiWeightEntryListViewNonPaginated
 )
 
 urlpatterns = [
@@ -30,6 +31,11 @@ urlpatterns = [
         "entries/list/",
         ApiWeightEntryListView.as_view(),
         name="api_weight_entry_list",
+    ),
+    path(
+        "entries/list/all",
+        ApiWeightEntryListViewNonPaginated.as_view(),
+        name="api_weight_entry_list_all",
     ),
     path(
         "entries/detail/<int:weightentry_pk>/edit",

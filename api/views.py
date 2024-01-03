@@ -26,15 +26,28 @@ class ApiWeightEntriesFromDays(View):
         user = request.user
         # data = json.loads(request.body)
 
+        queried_days = request.GET.get("days")
+
+        if queried_days == "all":
+            all_weight_entries = list(
+                WeightEntry.objects.all().select_related().values()
+            )
+            return JsonResponse({'weightentries': list(all_weight_entries)}, safe=False)
+
         days = int(request.GET.get("days"))
         date_n_days_ago = timezone.now() - timedelta(days=days)
 
-        weight_entries_from_user = WeightEntry.objects.filter(
-            user_id=user.id,
-            recorded__gte=date_n_days_ago  # only include entries from the last `n` days
-        ).select_related("user").annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+        weight_entries_days_ago = WeightEntry.objects.filter(
 
-        return JsonResponse({'weightentries': list(weight_entries_from_user)}, safe=False)
+            recorded__gte=date_n_days_ago  # only include entries from the last `n` days
+        ).select_related().annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+
+        # weight_entries_from_user = WeightEntry.objects.filter(
+        #     user_id=user.id,
+        #     recorded__gte=date_n_days_ago  # only include entries from the last `n` days
+        # ).select_related("user").annotate(username=F("user__username")).values().order_by("-recorded", "-updated", "-created")
+
+        return JsonResponse({'weightentries': list(weight_entries_days_ago)}, safe=False)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -344,16 +357,16 @@ class ApiWeightEntryListView(View):
         return JsonResponse({'weightentries': weightentries_page, 'total_pages': total_pages, 'total_entries': total_entries, "weight_entries_from_user": weightentries_user_page}, safe=False)
 
 
-# class ApiWeightEntryListViewNonPaginated(View):
-#     """List of weight entries"""
+class ApiWeightEntryListViewNonPaginated(View):
+    """List of weight entries"""
 
-#     def get(self, request, *args, **kwargs):
-#         """GET request"""
-#         weightentries = list(
-#             WeightEntry.objects.all().select_related().values()
-#         )
+    def get(self, request, *args, **kwargs):
+        """GET request"""
+        weightentries = list(
+            WeightEntry.objects.all().select_related().values()
+        )
 
-#         return JsonResponse(weightentries, safe=False)
+        return JsonResponse(weightentries, safe=False)
 
 
 class ApiWeightEntryDetailView(View):
@@ -384,7 +397,7 @@ class ApiUserWeightEntryListView(View):
 
         user = CustomUser.objects.get(pk=user_pk)
         i = 0
-        for entries in userweightentries:
+        for i in userweightentries:
             userweightentries[i]["user"] = user.username
             i += 1
 

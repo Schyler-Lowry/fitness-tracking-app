@@ -69,7 +69,7 @@ import {
   EditWeightEntryModal,
 } from "./Modal2";
 import { useCheckLogin } from "../hooks/useAuthentication";
-import { useGetAllWeightEntries } from "../hooks/useWeightEntries";
+import { useGetAllWeightEntriesByPage } from "../hooks/useWeightEntries";
 import { useSearchParams } from "react-router-dom";
 import { BsClock } from "react-icons/bs";
 import { HiDotsVertical } from "react-icons/hi";
@@ -83,7 +83,7 @@ export default function MainPage() {
 
 function Main() {
   const { data, isFetching, refetch, isRefetching, error, isError } =
-    useGetAllWeightEntries();
+    useGetAllWeightEntriesByPage();
 
   const {
     user,
@@ -105,7 +105,9 @@ function Main() {
         // h={"60vh"}
         h={["350px", "60vh"]}
         // bg={"gray.300"}
-        bgGradient={"radial( gray.600,gray.200)"}
+        bgGradient={
+          "repeating-linear(to-r, gray.200,gray.600,gray.400, gray.200,gray.600,gray.400, gray.200)"
+        }
         overflowY={"scroll"}
         // overflowY={["scroll", "auto"]}
         boxSizing={"border-box"}
@@ -155,7 +157,7 @@ function Main() {
 
 function MainOld() {
   const { data, isFetching, refetch, isRefetching, error, isError } =
-    useGetAllWeightEntries();
+    useGetAllWeightEntriesByPage();
 
   const {
     user,
@@ -357,6 +359,8 @@ function Paginator({
       >
         <Button
           size={"lg"}
+          border={"1px"}
+          borderColor={"blackAlpha.600"}
           // colorScheme="blue"
           boxShadow={"xl"}
           onClick={() => {
@@ -435,6 +439,8 @@ function Paginator({
 
         <Button
           size={"lg"}
+          border={"1px"}
+          borderColor={"blackAlpha.600"}
           boxShadow={"xl"}
           onClick={() => {
             if (page < totalPages) {
@@ -578,81 +584,95 @@ export function DisplayData({ data }) {
           )}
         </CardHeader>
         <CardBody>
-          <Text>{data.note}</Text>
-          <Text fontSize={"x-small"}>
-            Entry
-            <span style={{ color: "gray" }}> {data.id}</span> by {data.username}
-          </Text>
+          <SimpleGrid columns={2}>
+            <Box>
+              <Text fontSize={"x-small"}>
+                Entry
+                <span style={{ color: "gray" }}> {data.id}</span> by{" "}
+                {data.username}
+              </Text>
 
-          <Box
-            display={"flex"}
-            gap={2}
-            // background={"blue.200"}
-          >
-            <Box display={"flex"} gap={1}>
-              <Text id={"keys"} fontSize={"x-small"}>
-                Added to log on:
-              </Text>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {created.month} {created.dayOfMonth}, {created.year}
-              </Text>
-              <Box fontSize={"x-small"} my={0.5}>
-                <BsClock />
-              </Box>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {created.time}
-              </Text>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {created.timeOfDay}
-              </Text>
-            </Box>
+              <Box
+                display={"flex"}
+                gap={2}
+                // background={"blue.200"}
+              >
+                <Box display={"flex"} gap={1}>
+                  <Text id={"keys"} fontSize={"x-small"}>
+                    Added to log on:
+                  </Text>
+                  <Text id={"keys"} fontSize={"x-small"}>
+                    {created.month} {created.dayOfMonth}, {created.year}
+                  </Text>
+                  <Box fontSize={"x-small"} my={0.5}>
+                    <BsClock />
+                  </Box>
+                  <Text id={"keys"} fontSize={"x-small"}>
+                    {created.time}
+                  </Text>
+                  <Text id={"keys"} fontSize={"x-small"}>
+                    {created.timeOfDay}
+                  </Text>
+                </Box>
 
-            <Tooltip
-              ml={8}
-              label={tooltipLabel.map((label, index) => (
-                <Text key={index}>{label}</Text>
-              ))}
-              placement="bottom-end"
-            >
-              <IconButton
-                mt={-1.5}
-                aria-label="tooltip"
-                size={"xs"}
-                // background={"red.200"}
-                background={"none"}
-                isRound
-                icon={<QuestionOutlineIcon boxSize={3} />}
-              />
-            </Tooltip>
-          </Box>
-          {/* TODO: move all of this into a little tooltip/popup where the teal clock icon is */}
-          {/* {data.updated != data.created && (
-            // <Box
-            //   display={"flex"}
-            //   gap={2}
-            //   // background={"blue.200"}
-            // >
-            <Box display={"flex"} gap={1}>
-              <Text id={"keys"} fontSize={"x-small"}>
-                Edited:
-              </Text>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {updated.month} {updated.dayOfMonth}, {updated.year}
-              </Text>
-              <Box fontSize={"x-small"} my={0.5}>
-                <BsClock />
+                <Tooltip
+                  ml={8}
+                  label={tooltipLabel.map((label, index) => (
+                    <Text key={index}>{label}</Text>
+                  ))}
+                  placement="bottom-end"
+                >
+                  <IconButton
+                    mt={-1.5}
+                    aria-label="tooltip"
+                    size={"xs"}
+                    // background={"red.200"}
+                    background={"none"}
+                    isRound
+                    icon={<QuestionOutlineIcon boxSize={3} />}
+                  />
+                </Tooltip>
               </Box>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {updated.time}
-              </Text>
-              <Text id={"keys"} fontSize={"x-small"}>
-                {updated.timeOfDay}
-              </Text>
             </Box>
-            // </Box>
-          )} */}
+            {data.updated != data.created && (
+              // <Box
+              //   display={"flex"}
+              //   gap={2}
+              //   // background={"blue.200"}
+              // >
+              <Box display={"flex"} gap={1} justifyContent={"flex-end"}>
+                <Text id={"keys"} fontSize={"x-small"}>
+                  Edited:
+                </Text>
+                <Text id={"keys"} fontSize={"x-small"}>
+                  {updated.month} {updated.dayOfMonth}, {updated.year}
+                </Text>
+                <Box fontSize={"x-small"} my={0.5}>
+                  <BsClock />
+                </Box>
+                <Text id={"keys"} fontSize={"x-small"}>
+                  {updated.time}
+                </Text>
+                <Text id={"keys"} fontSize={"x-small"}>
+                  {updated.timeOfDay}
+                </Text>
+              </Box>
+              // </Box>
+            )}
+          </SimpleGrid>
         </CardBody>
-        <CardFooter></CardFooter>
+        <CardFooter display={"flex"} flexDir={"column"}>
+          <Box mx={"auto"} display={"flex"} flexDir={"column"}>
+            {data.note && (
+              <Text mx={"auto"} fontWeight={"semibold"} lineHeight={1}>
+                Note:
+              </Text>
+            )}
+            <Box>
+              <Text fontSize={"smaller"}>{data.note}</Text>
+            </Box>
+          </Box>
+        </CardFooter>
       </Card>
     </>
   );

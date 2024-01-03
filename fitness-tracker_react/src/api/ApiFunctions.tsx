@@ -2,8 +2,25 @@ import { djangoUrls, herokuUrls } from "./ApiUrls";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
-export async function getAllEntriesApi(page: string) {
+export async function getAllEntriesByPageApi(page: string) {
   const entriesUrl = herokuUrls.entries + `?page=${page}`;
+
+  const response = await fetch(entriesUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+export async function getAllEntriesApi() {
+  const entriesUrl = herokuUrls.all_entries;
 
   const response = await fetch(entriesUrl, {
     method: "GET",
@@ -132,7 +149,7 @@ export async function checkLoginApi() {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  console.log(data);
+  console.log(data.message);
   return data;
 }
 
